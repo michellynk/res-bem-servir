@@ -29,19 +29,26 @@
 
 ---
 
-## ADR-003 — WhatsApp Cloud API oficial (Meta)
-**Status:** 🟡 Proposta, depende de Q-01 e Q-12
+## ADR-003 — WhatsApp Cloud API oficial em coexistência com o app WhatsApp Business
+**Status:** ✅ Aceita (atualizada em 2026-11-23 após respostas de Q-01 e Q-12)
 
-**Contexto:** bibliotecas não oficiais (whatsapp-web.js, Baileys) são grátis, mas violam os termos e podem levar ao **banimento do número**.
+**Contexto:**
+- O restaurante não terá número exclusivo e quer continuar usando o **app WhatsApp Business** no celular (Q-12).
+- O cardápio da semana será **enviado ativamente** aos clientes (Q-01).
+- Bibliotecas não oficiais (whatsapp-web.js, Baileys) são grátis, mas violam os termos e podem levar ao **banimento do número**.
 
-**Decisão:** usar a **WhatsApp Business Cloud API** oficial, com um número dedicado ao bot. O chatbot é uma **máquina de estados** própria, persistida em `Conversation`, sem depender de plataformas de terceiros.
+**Decisão:** usar a **WhatsApp Business Cloud API** oficial no **modo coexistência**: o número atual do WhatsApp Business é conectado à API pelo *Embedded Signup* e continua funcionando no app do celular. O chatbot é uma **máquina de estados** própria, persistida em `Conversation`, sem depender de plataformas de chatbot de terceiros.
 
 **Consequências:**
-- custo por mensagem iniciada pela empresa (envio em massa do cardápio = template de marketing);
-- templates precisam de aprovação prévia da Meta;
-- o número usado na API não pode ser usado ao mesmo tempo no app WhatsApp do celular.
+- O número não muda e as conversas aparecem no celular da administradora.
+- Mensagens enviadas pelo app continuam gratuitas. As enviadas pela API seguem a tabela da Meta, e o envio ativo do cardápio é um **template de marketing**, cobrado por mensagem e com aprovação prévia.
+- O webhook recebe também as mensagens que a administradora envia pelo app (eventos de "eco"), o que permite **pausar o bot** naquela conversa (RN-29).
+- Aparelhos vinculados (WhatsApp Web/Desktop) são desconectados na ativação, e algumas funções do app podem ficar limitadas. Conferir a lista atual da Meta antes de ativar.
+- Limite de vazão de 20 mensagens/s por número, mais que suficiente para o volume do restaurante.
 
-**Alternativa avaliada:** provedores BSP (Twilio, Z-API, 360dialog) facilitam o onboarding, mas acrescentam custo. Ficam como plano B.
+**Alternativas avaliadas:**
+- **Provedor BSP** (360dialog, Twilio, Z-API etc.): facilita o onboarding de coexistência, mas acrescenta mensalidade. Fica como plano B se o cadastro direto na Meta travar.
+- **Só recursos nativos do app** (saudação, respostas rápidas, listas de transmissão): plano provisório até o bot ficar pronto.
 
 ---
 

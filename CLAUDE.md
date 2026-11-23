@@ -9,5 +9,6 @@
 - Decisões técnicas novas vão em `docs/DECISOES.md` como novo ADR.
 - Mudanças no banco: atualize `docs/MODELAGEM_DADOS.md` junto com o `schema.prisma`.
 - Ao concluir itens do plano, marque o checklist em `docs/PLANO_DO_PROJETO.md`.
-- Na etapa de **impressão do cardápio**, peça à usuária o exemplo de cardápio impresso antes de implementar.
+- A **impressão do cardápio** segue o exemplo em `docs/referencias/cardapio-exemplo.jpg`.
+- Valores que podem mudar (horário limite, envios, preços) ficam em `Setting` com padrão em `src/server/settings/defaults.ts`. Mantenha a tabela "Onde alterar configurações" (estudo §6 e README) em dia.
 - Regras de negócio ficam em `src/server/` (testáveis), não em componentes React.

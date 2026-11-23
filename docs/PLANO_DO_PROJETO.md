@@ -1,4 +1,4 @@
-# Plano do Projeto — Bem Servir
+# Plano do Projeto — RBS Refeições Bem Servir
 
 > Plano incremental. Cada etapa entrega algo **utilizável** e é validada com a administradora antes de seguir.
 > Regras de negócio: [ESTUDO_DE_NEGOCIO.md](./ESTUDO_DE_NEGOCIO.md) · Dados: [MODELAGEM_DADOS.md](./MODELAGEM_DADOS.md) · Decisões técnicas: [DECISOES.md](./DECISOES.md)
@@ -32,21 +32,23 @@ Futuro   Pedido pelo site / clientes com login
 - **Entrega:** projeto rodando localmente com página "em construção".
 
 ## Etapa 1 — Banco de dados e autenticação
-- [ ] Validar a [modelagem](./MODELAGEM_DADOS.md) (depende de Q-02, Q-05)
+- [ ] Validar a [modelagem](./MODELAGEM_DADOS.md) (pendentes: Q-05 preços, Q-14 composição da marmita)
 - [ ] `schema.prisma` + primeira migração
-- [ ] Seed: usuária admin, seções do cardápio, feriados nacionais do ano
+- [ ] Seed: usuária admin, modelo do cardápio atual (Carnes/Complementos/Saladas + itens fixos), tamanhos Pequena/Grande, feriados nacionais do ano
+- [ ] Módulo de configurações (`Setting` + valores padrão em `src/server/settings/defaults.ts`)
 - [ ] Auth.js com login de e-mail/senha; middleware protegendo `/admin`
 - [ ] Layout base do painel (menu lateral: Cardápio, Pedidos, Feedbacks, Chatbot, Configurações)
 - **Entrega:** a administradora faz login e vê o painel vazio.
 
 ## Etapa 2 — Gestão do cardápio
-- [ ] Cadastro de **seções** e do **modelo (formato prévio)**
+- [ ] Editor do **modelo** do cardápio: seções (criar, renomear, reordenar), itens fixos, título e rodapé (RN-11)
 - [ ] "Nova semana": gera seg–sex a partir do modelo ou copiando a semana anterior
 - [ ] Marcação automática de feriados; marcar/desmarcar dia fechado
 - [ ] Editor do cardápio por dia (rascunho → publicar)
 - [ ] Gestão de feriados (lista + cadastro manual)
-- [ ] **Impressão do cardápio** — ⚠️ **solicitar o exemplo de cardápio impresso antes de começar este item**
-- [ ] 🔔 Em paralelo: abrir conta Meta Business e solicitar acesso à WhatsApp Cloud API
+- [ ] **Impressão do cardápio** no layout do [exemplo](./referencias/cardapio-exemplo.jpg), 1 página A4 (RN-14, RN-18). ✅ Exemplo recebido.
+- [ ] Tamanhos de marmita e preços (RN-39)
+- [ ] 🔔 Em paralelo: criar conta Meta Business (Business Manager), verificar a empresa e conferir os requisitos de **coexistência** para o número atual do WhatsApp Business (ADR-003)
 - **Entrega:** ela monta, publica e imprime o cardápio da semana pelo sistema.
 
 ## Etapa 3 — Site público
@@ -61,6 +63,7 @@ Futuro   Pedido pelo site / clientes com login
 - [ ] **Kanban**: Para fazer → Em preparação → Finalizado (arrastar e soltar)
 - [ ] Filtro por dia, contadores por coluna, atualização automática
 - [ ] Lançamento manual de pedido (canal `BALCAO`), útil antes do bot ficar pronto
+- [ ] Horário limite configurável, desligado por padrão, sugestão 13:00 (RN-35)
 - [ ] **Impressão de pedidos** (individual e lista do dia, conforme Q-08)
 - **Entrega:** produção do dia organizada no kanban.
 
@@ -71,7 +74,9 @@ Futuro   Pedido pelo site / clientes com login
 - **Entrega:** feedbacks centralizados.
 
 ## Etapa 6 — Chatbot WhatsApp
+- [ ] Conectar o número atual em **coexistência** (Embedded Signup) e configurar o webhook
 - [ ] Webhook (verificação + recebimento), validação de assinatura, idempotência
+- [ ] Tratar ecos de mensagens enviadas pelo app e **pausar o bot** na conversa (RN-29)
 - [ ] Máquina de estados: boas-vindas → menu (1, 2, 3) → subfluxos
 - [ ] 1: cardápio publicado do banco
 - [ ] 2: fluxo de pedido completo → cria `Order` no kanban
@@ -81,9 +86,11 @@ Futuro   Pedido pelo site / clientes com login
 - [ ] Testes automatizados de cada fluxo da conversa
 - **Entrega:** atendimento automatizado no número do restaurante.
 
-## Etapa 7 — Envio do cardápio da semana (depende de Q-01)
+## Etapa 7 — Envio ativo do cardápio (RN-27, RN-28)
 - [ ] Lista de clientes com opt-in (e opção de sair: "SAIR")
-- [ ] Template aprovado na Meta
+- [ ] Template de marketing aprovado na Meta
+- [ ] Envio agendado durante a semana (padrão: segunda de manhã, configurável) + envio manual pelo painel
+- [ ] Envio diário opcional, desligado por padrão (RN-28)
 - [ ] Botão "Enviar cardápio da semana" com confirmação e estimativa de custo
 - [ ] Relatório de envio (enviados, falhas)
 - **Entrega:** fim do envio manual.

@@ -1,4 +1,4 @@
-# Estudo de Negócio — Restaurante Bem Servir
+# Estudo de Negócio — RBS Refeições Bem Servir
 
 > Documento vivo. Toda regra nova ou alterada deve ser registrada aqui **e** resumida no [README](../README.md#regras-de-negócio-definidas).
 > Convenção: cada regra recebe um código `RN-XX`, cada dúvida em aberto um código `Q-XX`.
@@ -8,7 +8,7 @@
 
 ## 1. Contexto
 
-O restaurante funciona de **segunda a sexta-feira**, exceto feriados que caem nesses dias. Toda semana a proprietária (administradora) monta um **cardápio novo** e o envia **manualmente pelo WhatsApp** a clientes frequentes:
+O restaurante **RBS – Refeições Bem Servir** funciona de **segunda a sexta-feira**, exceto feriados que caem nesses dias. Toda semana a proprietária (administradora) monta um **cardápio novo** e o envia **manualmente pelo WhatsApp Business** a clientes frequentes:
 
 - clientes que pedem **marmita**;
 - clientes que só querem **saber o cardápio** para se programar.
@@ -60,31 +60,49 @@ Ela **não quer publicar o cardápio inteiro nas redes sociais**, por receio de 
 
 ### 3.2 Cardápio
 
+**Formato atual (referência):** [`referencias/cardapio-exemplo.jpg`](./referencias/cardapio-exemplo.jpg)
+
+![Exemplo de cardápio](./referencias/cardapio-exemplo.jpg)
+
+Estrutura observada no exemplo:
+
+| Elemento | Exemplo | Comportamento no sistema |
+|----------|---------|--------------------------|
+| Cabeçalho | "RBS – REFEIÇÕES BEM SERVIR" | Texto configurável |
+| Período | "CARDÁPIO DA SEMANA – 28 A 02/10/2026" | Gerado automaticamente a partir das datas da semana |
+| Colunas (seções) | CARNES · COMPLEMENTOS · SALADAS | **Personalizáveis**: criar, renomear, reordenar, remover |
+| Linhas por dia | 4 linhas por dia | Quantidade livre por seção |
+| Itens fixos | "BIFE ou FILÉ de FRANGO" (Carnes), "ARROZ – FEIJÃO" (Complementos), "SALADAS VARIADAS" (Saladas) | Vêm **pré-preenchidos** todos os dias pelo modelo, editáveis |
+| Itens variáveis | Strogonoff, Frango à parmegiana, Batata soutê... | Preenchidos pela administradora a cada semana |
+| Rodapé | "OBS.: Na falta de produtos no mercado, o cardápio poderá sofrer alterações." | Texto configurável |
+
 **Fluxo:**
 ```
 Administradora abre "Nova semana"
-   → sistema cria a semana a partir do MODELO (formato prévio) ou copia a semana anterior
+   → sistema cria seg–sex a partir do MODELO (seções + itens fixos)
+     ou copia a semana anterior
    → dias fechados (feriados) já vêm marcados
-   → ela edita só o que muda (pratos do dia)
+   → ela preenche só os itens variáveis
    → salva como RASCUNHO
    → PUBLICA → cardápio passa a valer no site e no chatbot
-   → (opcional) imprime
+   → imprime (layout igual ao exemplo, 1 página A4)
 ```
 
 | Código | Regra | Status |
 |--------|-------|--------|
 | RN-10 | O cardápio é **semanal** (segunda a sexta) e organizado **por dia**. | ✅ |
-| RN-11 | Existe um **formato prévio (modelo)** com as seções fixas (ex.: prato principal, guarnições, salada, sobremesa). A administradora só altera o necessário. | ✅ |
+| RN-11 | O cardápio segue um **modelo totalmente personalizável**: seções (colunas), ordem, itens fixos pré-preenchidos, cabeçalho e rodapé. O modelo padrão reproduz o cardápio atual (Carnes, Complementos, Saladas). | ✅ |
 | RN-12 | O cardápio tem status `RASCUNHO` → `PUBLICADO`. Só o publicado aparece no site e no chatbot. | 🟡 |
 | RN-13 | Ao publicar/alterar o cardápio, o chatbot passa a usar os novos dados **imediatamente** (fonte única de verdade: o banco). | ✅ |
-| RN-14 | O cardápio deve poder ser **impresso**, seguindo um layout de referência. | ✅ |
+| RN-14 | O cardápio pode ser **impresso** seguindo o layout do [exemplo](./referencias/cardapio-exemplo.jpg): título, período, cabeçalho das seções, um bloco por dia em tabela, rodapé de observação, tudo em **1 página A4 retrato**. | ✅ |
 | RN-15 | O site público mostra **apenas o cardápio do dia**, nunca a semana inteira (proteção contra cópia). | ✅ |
-| RN-16 | O chatbot pode mostrar o cardápio do dia e, a definir, o da semana (ver Q-03). | ❓ |
+| RN-16 | O bot mostra o cardápio do dia e o da semana (o da semana já é enviado aos clientes com opt-in, RN-27). | 🟡 |
 | RN-17 | Opção "copiar semana anterior" para reaproveitar pratos recorrentes. | 🟡 |
+| RN-18 | Período no cabeçalho no formato do exemplo: `DD A DD/MM/AAAA` (ex.: "28 A 02/10/2026"). | ✅ |
 
-> ⚠️ **Pendente:** ao chegar na etapa de impressão, **solicitar o exemplo de cardápio impresso** usado hoje, para reproduzir o layout.
+### 3.3 Chatbot (WhatsApp Business)
 
-### 3.3 Chatbot (WhatsApp)
+O bot atende **no mesmo número de WhatsApp Business que o restaurante já usa** (ver §4.1). A administradora continua respondendo pelo celular quando quiser.
 
 **Fluxo de conversa (MVP):**
 ```
@@ -96,14 +114,15 @@ Cliente manda qualquer mensagem
       3. Solicitações, elogios ou reclamações
       (0. Falar com atendente — proposta, ver Q-06)
 
-1 → mostra o cardápio do dia (ou da semana, ver Q-03) → volta ao menu
+1 → cardápio do dia (e opção de ver a semana) → volta ao menu
 2 → fluxo de pedido:
-      escolher dia (hoje/amanhã, conforme horário limite)
-      → escolher opção/tamanho da marmita
+      escolher dia (hoje/próximos dias úteis; ver RN-35)
+      → tamanho: Pequena ou Grande
+      → escolhas da marmita (ver Q-14)
       → quantidade
       → observações (ex.: sem feijão)
-      → retirada ou entrega (+ endereço, se entrega)
-      → resumo → cliente CONFIRMA
+      → retirada ou entrega (+ endereço, se entrega; ver Q-07)
+      → resumo com valor → cliente CONFIRMA
       → pedido criado com status "Para fazer" e aparece no kanban
 3 → escolher tipo: Solicitação | Elogio | Reclamação
       → cliente escreve a mensagem
@@ -119,7 +138,9 @@ Cliente manda qualquer mensagem
 | RN-24 | O cliente é identificado pelo número de WhatsApp. No primeiro contato, o bot pede o nome. | 🟡 |
 | RN-25 | A conversa expira após X minutos de inatividade e volta ao menu inicial. | 🟡 |
 | RN-26 | Mensagens fora do fluxo esperado → bot repete as opções válidas. | 🟡 |
-| RN-27 | Os clientes que aceitarem (opt-in) recebem o cardápio da semana por WhatsApp, enviado em lote pelo painel. | 🟡 (ver Q-01) |
+| RN-27 | **Envio ativo do cardápio da semana** para os clientes com opt-in, feito **durante a semana** (padrão: segunda-feira de manhã; dia e horário configuráveis), disparado pelo painel ou agendado. | ✅ |
+| RN-28 | Opcional, desligado por padrão: envio diário do cardápio do dia, em horário configurável. | 🟡 |
+| RN-29 | Quando a administradora responde manualmente uma conversa pelo celular, o bot **pausa** naquela conversa por um tempo configurável, para não responder por cima dela. | 🟡 |
 
 ### 3.4 Pedidos de marmita
 
@@ -130,10 +151,11 @@ Cliente manda qualquer mensagem
 | RN-32 | Pedidos podem ser **impressos** (individual e/ou lista do dia, ver Q-08). | ✅ |
 | RN-33 | Cada pedido guarda o **canal de origem** (`WHATSAPP`, `SITE`, `BALCAO`), já pensando no pedido pelo site. | ✅ |
 | RN-34 | Pedido também pode ser **cancelado** (fora do kanban, registra o motivo). | 🟡 |
-| RN-35 | Existe um **horário limite** para pedir marmita do dia. | ❓ (Q-04) |
+| RN-35 | **Horário limite** para pedidos do dia: **desligado por padrão**. Pode ser ativado no painel; quando ativo, o valor sugerido é **13:00**. Depois do limite, o bot oferece o próximo dia útil. Ver [Onde alterar configurações](#6-onde-alterar-configurações). | ✅ |
 | RN-36 | O pedido guarda um "retrato" do item e do preço no momento do pedido (mudar o cardápio depois não altera pedidos antigos). | ✅ (boa prática) |
 | RN-37 | O kanban mostra por padrão os pedidos **do dia**, com filtro por data. | 🟡 |
 | RN-38 | Opcional: avisar o cliente pelo WhatsApp quando o pedido for "Finalizado". | ❓ (Q-09) |
+| RN-39 | Existem dois **tamanhos de marmita: Pequena e Grande**. Tamanhos, nomes e preços são **cadastráveis** no painel (podem surgir outros). | ✅ |
 
 ### 3.5 Solicitações, elogios e reclamações
 
@@ -162,10 +184,23 @@ Cliente manda qualquer mensagem
 
 ## 4. Restrições e riscos
 
-### 4.1 WhatsApp: API oficial vs. não oficial
-- **API oficial (WhatsApp Cloud API / Meta)**: estável, sem risco de banimento, exige conta Business verificada e número dedicado. **Mensagens iniciadas pela empresa** (como mandar o cardápio da semana para todos) exigem **templates aprovados pela Meta**, **opt-in** do cliente e são **cobradas por mensagem** (categoria *marketing*). Respostas dentro da janela de 24h após o cliente escrever são de *serviço* e baratas ou gratuitas.
-- **Bibliotecas não oficiais** (whatsapp-web.js, Baileys): grátis, mas violam os termos do WhatsApp e há **risco real de banimento do número** do restaurante.
-- **Recomendação:** API oficial, com um número dedicado ao bot (ver [DECISOES.md](./DECISOES.md) — ADR-003).
+### 4.1 WhatsApp Business + API (coexistência)
+
+O restaurante **não terá um número exclusivo** para o bot e quer continuar usando o **app WhatsApp Business** (Q-12). A solução é a **coexistência** da Meta: o mesmo número fica ao mesmo tempo no app WhatsApp Business (celular) e na WhatsApp Cloud API (bot).
+
+| Aspecto | Como fica |
+|---------|-----------|
+| Número | O mesmo que os clientes já conhecem. Não precisa trocar nem avisar ninguém. |
+| Celular | Continua com o app WhatsApp Business. As conversas do bot aparecem lá também. |
+| Mensagens enviadas pelo app (manualmente) | Continuam **gratuitas**. |
+| Mensagens enviadas pela API (bot) | Seguem a tabela de preços da Meta: respostas dentro de 24h após o cliente escrever são de *serviço* (gratuitas ou baratas); o **envio ativo do cardápio** (RN-27) é um **template de marketing**, cobrado por mensagem. |
+| Requisitos | Número já ativo no app WhatsApp Business (versão recente), conta Meta Business, conexão feita pelo *Embedded Signup* (direto pela Meta ou por um provedor/BSP). |
+| Limitações conhecidas | Aparelhos vinculados (WhatsApp Web/Desktop) são desconectados na ativação. Algumas funções do app podem ficar limitadas. Desconexão é feita pelo próprio app. **Confirmar a lista atual de limitações no momento da ativação.** |
+| Risco | Bot e administradora respondendo ao mesmo tempo → resolvido pela pausa automática do bot (RN-29). |
+
+**Alternativas descartadas:**
+- **Bibliotecas não oficiais** (whatsapp-web.js, Baileys): violam os termos e há **risco real de banimento do número** do restaurante, que é o principal canal de vendas.
+- **Só recursos nativos do app** (mensagem de saudação, respostas rápidas, listas de transmissão): grátis, mas não anotam pedidos nem integram com o painel. Podem ser usados como **plano provisório** até o bot ficar pronto.
 
 ### 4.2 LGPD
 O sistema guarda nome, telefone e, possivelmente, endereço de clientes. É necessário:
@@ -182,24 +217,50 @@ Nenhuma solução impede totalmente a cópia (alguém pode tirar print). As medi
 
 | Código | Pergunta | Impacta |
 |--------|----------|---------|
-| Q-01 | O envio do cardápio semanal deve ser **ativo** (o restaurante dispara para a lista, com custo por mensagem na API oficial) ou **passivo** (cliente pergunta e o bot responde)? Ou os dois? | RN-27, custos |
-| Q-02 | Quais são as **seções fixas** do cardápio (prato principal, guarnição, salada, sobremesa, suco...)? Há várias opções de prato por dia? | RN-11, modelo de dados |
-| Q-03 | O bot deve mostrar o cardápio **da semana** ou só **do dia**? | RN-16 |
-| Q-04 | Qual o **horário limite** para pedir marmita? Pode pedir para dias futuros? | RN-35 |
-| Q-05 | **Tamanhos e preços** das marmitas (P/M/G?). Preço varia por prato? | Pedido, modelo de dados |
-| Q-06 | Precisa de opção "falar com atendente humano" (o bot pausa e ela responde manualmente)? | Chatbot |
+| Q-05 | **Preços** da marmita Pequena e da Grande. O preço é fixo ou varia conforme o prato? | Pedido |
+| Q-06 | Precisa de opção "falar com atendente" no menu do bot? | Chatbot |
 | Q-07 | Tem **entrega**? Taxa? Área de entrega? Ou só retirada? | Pedido |
 | Q-08 | Impressão de pedidos: **um por folha/etiqueta**, **lista do dia** ou os dois? Tem impressora térmica? | RN-32 |
 | Q-09 | Avisar o cliente quando a marmita ficar pronta? | RN-38 |
 | Q-10 | **Pagamento**: só na retirada/entrega, ou Pix antecipado? | Pedido, futuro |
-| Q-11 | O restaurante tem horário de funcionamento fixo (ex.: 11h–14h)? O bot responde fora desse horário? | Chatbot, site |
-| Q-12 | Ela usa hoje o WhatsApp Business no **celular pessoal**? Pode usar um **número novo** para o bot? (A API oficial não pode ser usada ao mesmo tempo que o app no mesmo número.) | Infra WhatsApp |
+| Q-11 | Qual o horário de funcionamento (ex.: 11h–14h)? O bot responde fora desse horário? | Chatbot, site |
 | Q-13 | Haverá funcionários usando o sistema (ex.: cozinha vendo o kanban)? | Papel STAFF |
+| Q-14 | **O que compõe a marmita?** O cliente escolhe a carne? Quantas carnes e complementos cabem em cada tamanho? Arroz, feijão e salada vêm sempre? | Fluxo de pedido, modelo de dados |
+| Q-15 | O cliente pode pedir marmita para **dias futuros** da semana (ex.: na segunda, já pedir a de quarta)? | RN-35, fluxo de pedido |
+
+### Questões respondidas
+
+| Código | Resposta | Virou |
+|--------|----------|-------|
+| Q-01 | O cardápio da semana deve ser **enviado ativamente durante a semana**. Considerar o uso do WhatsApp Business. | RN-27, RN-28, §4.1 |
+| Q-02 | O cardápio deve ser **personalizável**. Exemplo atual enviado. | RN-11, RN-14, RN-18 |
+| Q-03 | Coberta por RN-16 e RN-27. | RN-16 |
+| Q-04 | Sem horário limite por padrão; se houver, 13h. Precisa ser fácil de alterar. | RN-35, §6 |
+| Q-05 (parcial) | Marmitas são **Pequena e Grande**. Preços ainda em aberto. | RN-39 |
+| Q-12 | Não haverá número exclusivo; usar o **WhatsApp Business** atual. | §4.1, RN-29 |
 
 ---
 
-## 6. Histórico de alterações
+## 6. Onde alterar configurações
+
+Regras que podem mudar com frequência **não ficam fixas no código**: ficam em configurações editáveis no painel, com um valor padrão no código.
+
+| Configuração | No painel (planejado) | Chave no banco | Valor padrão (código) |
+|--------------|----------------------|----------------|----------------------|
+| Horário limite de pedidos (RN-35) | Configurações → Pedidos → "Horário limite" (liga/desliga + hora) | `orders.cutoff.enabled` / `orders.cutoff.time` | `false` / `"13:00"` em `src/server/settings/defaults.ts` |
+| Dia/hora do envio semanal (RN-27) | Configurações → Chatbot → "Envio do cardápio" | `broadcast.weekly.weekday` / `broadcast.weekly.time` | segunda / `"08:00"` |
+| Envio diário (RN-28) | Configurações → Chatbot | `broadcast.daily.enabled` / `broadcast.daily.time` | `false` / `"09:00"` |
+| Pausa do bot após resposta manual (RN-29) | Configurações → Chatbot | `bot.pauseAfterHumanMinutes` | `60` |
+| Tamanhos e preços (RN-39) | Cardápio → Tamanhos e preços | tabela `Product` | Pequena, Grande (seed) |
+| Seções, itens fixos, cabeçalho e rodapé (RN-11) | Cardápio → Modelo | tabelas `MenuTemplate*` | modelo do exemplo (seed) |
+
+> A regra que usa o horário limite fica em `src/server/orders/cutoff.ts` (planejado). Quando o código existir, esta tabela será conferida e mantida atualizada.
+
+---
+
+## 7. Histórico de alterações
 
 | Data | Alteração |
 |------|-----------|
 | 2026-11-19 | Versão inicial do estudo de negócio a partir do briefing. |
+| 2026-11-23 | Respondidas Q-01, Q-02, Q-03, Q-04, Q-12 e parte da Q-05. Exemplo de cardápio adicionado. Nova estratégia de WhatsApp Business com coexistência. Novas regras RN-18, RN-28, RN-29, RN-39. Novas questões Q-14 e Q-15. Seção "Onde alterar configurações". |

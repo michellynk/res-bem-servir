@@ -1,6 +1,6 @@
-# 🍲 Bem Servir
+# 🍲 RBS – Refeições Bem Servir
 
-Sistema do restaurante **Bem Servir**: gestão do cardápio semanal, chatbot de atendimento no WhatsApp e central de pedidos de marmita, com um site público que mostra o cardápio do dia.
+Sistema do restaurante **RBS – Refeições Bem Servir**: gestão do cardápio semanal, chatbot de atendimento no WhatsApp Business e central de pedidos de marmita, com um site público que mostra o cardápio do dia.
 
 > **Status:** 📐 Planejamento. Código ainda não iniciado. Próxima etapa: **Etapa 0 — Fundação**.
 
@@ -44,13 +44,14 @@ Fluxo central: **cardápio → chatbot → pedidos**.
 - Aviso de feriado/dia fechado
 
 **Painel da administradora**
-- 📋 **Cardápio semanal** a partir de um formato prévio, com rascunho/publicação e **impressão**
-- 🤖 **Chatbot**: edição dos textos (introdução, opções, mensagens)
+- 📋 **Cardápio semanal** a partir de um modelo personalizável (seções, itens fixos, título e rodapé), com rascunho/publicação e **impressão** no formato atual ([exemplo](docs/referencias/cardapio-exemplo.jpg))
+- 🤖 **Chatbot**: edição dos textos e envio do cardápio da semana aos clientes
+- ⚙️ **Configurações**: horário limite de pedidos, dia/hora do envio, tamanhos e preços das marmitas
 - 🧾 **Pedidos de marmita** em **kanban** (Para fazer → Em preparação → Finalizado), com **impressão**
 - 💬 **Solicitações, elogios e reclamações**, separados por tipo
 - 📅 Feriados e dias fechados
 
-**Chatbot WhatsApp**
+**Chatbot WhatsApp** (no mesmo número do WhatsApp Business do restaurante)
 1. Ver cardápio
 2. Pedir marmita
 3. Solicitações, elogios ou reclamações
@@ -66,7 +67,7 @@ Fluxo central: **cardápio → chatbot → pedidos**.
 | Banco | PostgreSQL + Prisma ORM |
 | Validação | Zod |
 | Autenticação | Auth.js, com papéis `ADMIN` / `STAFF` / `CUSTOMER` |
-| WhatsApp | WhatsApp Business Cloud API (oficial, Meta) |
+| WhatsApp | WhatsApp Cloud API oficial (Meta) em **coexistência** com o app WhatsApp Business |
 | Testes | Vitest (unidade/domínio), Playwright (E2E) |
 | Qualidade | ESLint, Prettier, Husky, Conventional Commits, GitHub Actions |
 | Deploy | Vercel + Neon/Supabase |
@@ -106,19 +107,25 @@ res-bem-servir/
 - ✅ RN-01/02: abre de segunda a sexta; feriados nesses dias são dias fechados.
 
 **Cardápio**
-- ✅ RN-10/11: cardápio semanal, por dia, criado a partir de um **formato prévio** editável.
+- ✅ RN-10: cardápio semanal, organizado por dia.
+- ✅ RN-11: modelo **totalmente personalizável** (seções/colunas, ordem, itens fixos, título e rodapé). Padrão: Carnes · Complementos · Saladas, como no cardápio atual.
 - ✅ RN-13: o chatbot usa sempre o cardápio publicado mais recente.
-- ✅ RN-14: o cardápio pode ser impresso (layout conforme o exemplo a ser enviado).
+- ✅ RN-14/18: impressão em 1 página A4 no layout do [exemplo](docs/referencias/cardapio-exemplo.jpg), com período "DD A DD/MM/AAAA".
 - ✅ RN-15: o site público mostra **só o cardápio do dia**.
 - 🟡 RN-12: rascunho → publicado.
 
-**Chatbot**
+**Chatbot (WhatsApp Business)**
 - ✅ RN-20/21: introdução + opções 1/2/3; textos editáveis pelo painel.
+- ✅ RN-27: **envio ativo do cardápio da semana** aos clientes com opt-in, durante a semana (padrão: segunda de manhã, configurável).
+- 🟡 RN-28: envio diário do cardápio do dia (opcional, desligado).
+- 🟡 RN-29: o bot pausa na conversa quando a administradora responde pelo celular.
 
 **Pedidos**
 - ✅ RN-30/31: kanban Para fazer → Em preparação → Finalizado.
 - ✅ RN-32: pedidos imprimíveis.
 - ✅ RN-33: pedido registra o canal de origem (WhatsApp, site, balcão).
+- ✅ RN-35: **horário limite desligado por padrão**; se ativado, sugestão de 13:00 (ver [onde alterar](docs/ESTUDO_DE_NEGOCIO.md#6-onde-alterar-configurações)).
+- ✅ RN-39: marmitas **Pequena** e **Grande**; tamanhos e preços cadastráveis.
 
 **Feedbacks**
 - ✅ RN-40: Solicitações, Elogios e Reclamações em seções separadas.
@@ -126,14 +133,25 @@ res-bem-servir/
 **Usuários**
 - ✅ RN-60/61: só `ADMIN` acessa o painel; modelagem já prevê `CUSTOMER` e `STAFF`.
 
+## Onde alterar configurações
+
+Regras que mudam com frequência ficam no painel, não no código. Tabela completa em [docs/ESTUDO_DE_NEGOCIO.md § 6](docs/ESTUDO_DE_NEGOCIO.md#6-onde-alterar-configurações).
+
+| O quê | Onde (planejado) |
+|-------|------------------|
+| Horário limite de pedidos | Painel → Configurações → Pedidos · chave `orders.cutoff.*` · padrão em `src/server/settings/defaults.ts` |
+| Dia/hora do envio do cardápio | Painel → Configurações → Chatbot · chave `broadcast.weekly.*` |
+| Tamanhos e preços das marmitas | Painel → Cardápio → Tamanhos e preços |
+| Seções, itens fixos, título e rodapé do cardápio | Painel → Cardápio → Modelo |
+
 ## Questões em aberto
 
 Lista completa em [docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto](docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto). As que mais pesam:
 
-- **Q-01**: enviar o cardápio da semana ativamente para a lista (com custo por mensagem) ou só responder quando o cliente perguntar?
-- **Q-02 / Q-05**: seções do cardápio, tamanhos e preços das marmitas.
-- **Q-04**: horário limite para pedidos.
-- **Q-12**: número de WhatsApp dedicado para o bot.
+- **Q-05**: preços da marmita Pequena e da Grande (fixos ou variam por prato?).
+- **Q-14**: o que compõe a marmita (o cliente escolhe a carne? quantos itens por tamanho?).
+- **Q-15**: pode pedir marmita para dias futuros da semana?
+- **Q-07**: tem entrega ou só retirada?
 
 ## Documentação
 
