@@ -2,7 +2,7 @@
 
 Sistema do restaurante **RBS – Refeições Bem Servir**: gestão do cardápio semanal, chatbot de atendimento no WhatsApp Business e central de pedidos de marmita, com um site público que mostra o cardápio do dia.
 
-> **Status:** 📐 Planejamento. Código ainda não iniciado. Próxima etapa: **Etapa 0 — Fundação**.
+> **Status:** 🏗️ Etapa 0 (Fundação) concluída: projeto rodando com página "em construção". Próxima etapa: **Etapa 1 — Banco de dados e autenticação**.
 
 ---
 
@@ -62,13 +62,13 @@ Fluxo central: **cardápio → chatbot → pedidos**.
 
 | Camada | Tecnologia |
 |--------|------------|
-| App (front + back) | Next.js (App Router) + TypeScript |
+| App (front + back) | Next.js 16 (App Router) + React 19 + TypeScript |
 | UI | Tailwind CSS, shadcn/ui, dnd-kit (kanban) |
 | Banco | PostgreSQL + Prisma ORM |
 | Validação | Zod |
 | Autenticação | Auth.js, com papéis `ADMIN` / `STAFF` / `CUSTOMER` |
 | WhatsApp | WhatsApp Cloud API oficial (Meta) em **coexistência** com o app WhatsApp Business |
-| Testes | Vitest (unidade/domínio), Playwright (E2E) |
+| Testes | Vitest (unidade/domínio), Playwright (E2E, a partir da Etapa 2) |
 | Qualidade | ESLint, Prettier, Husky, Conventional Commits, GitHub Actions |
 | Deploy | Vercel + Neon/Supabase |
 
@@ -76,26 +76,28 @@ Justificativas em [docs/DECISOES.md](docs/DECISOES.md).
 
 ## Estrutura do repositório
 
-Estrutura planejada:
+Estrutura atual e planejada (✔ = já existe):
 
 ```
 res-bem-servir/
-├── docs/                       # Documentação de negócio e técnica
-├── prisma/                     # schema.prisma, migrações, seed
+├── .github/workflows/ci.yml    # ✔ CI: formatação, lint, tipos, testes e build
+├── docs/                       # ✔ Documentação de negócio e técnica
+├── prisma/                     # schema.prisma, migrações, seed (Etapa 1)
 ├── src/
-│   ├── app/
+│   ├── app/                    # ✔ Rotas do Next.js (página inicial "em construção")
 │   │   ├── (public)/           # Site público
 │   │   ├── admin/              # Painel da gerente
 │   │   └── api/whatsapp/       # Webhook do chatbot
-│   ├── components/             # Componentes de UI
-│   ├── server/                 # Regras de negócio (domínio)
-│   │   ├── menu/
+│   ├── components/             # ✔ Componentes de UI (shadcn/ui em components/ui)
+│   ├── server/                 # ✔ Regras de negócio (domínio) — ver src/server/README.md
+│   │   ├── menu/               # ✔ week-period.ts (RN-10, RN-18, RN-19)
 │   │   ├── orders/
 │   │   ├── feedback/
 │   │   ├── calendar/           # Dias úteis e feriados
 │   │   └── chatbot/            # Máquina de estados + cliente WhatsApp
-│   └── lib/                    # Utilitários (db, auth, datas)
-└── tests/
+│   └── lib/                    # ✔ Utilitários (cn; depois db, auth, env)
+├── docker-compose.yml          # ✔ PostgreSQL local
+└── .env.example                # ✔ Variáveis de ambiente (sem valores reais)
 ```
 
 ## Regras de negócio definidas
@@ -186,4 +188,39 @@ Lista completa em [docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto](docs/ESTUDO_
 4. Abra um Pull Request para a `main`.
 
 ### Rodando localmente
-_Será documentado na Etapa 0._
+
+Pré-requisitos: **Node.js 22+** (ver `.nvmrc`) e **Docker** (para o banco, a partir da Etapa 1).
+
+```bash
+npm install
+```
+
+```bash
+cp .env.example .env
+```
+
+```bash
+npm run dev
+```
+
+Acesse http://localhost:3000.
+
+Banco de dados local (a partir da Etapa 1):
+
+```bash
+npm run db:up
+```
+
+### Scripts
+
+| Comando | O que faz |
+|---------|-----------|
+| `npm run dev` | Servidor de desenvolvimento |
+| `npm run build` / `npm start` | Build e servidor de produção |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | Checagem de tipos (TypeScript) |
+| `npm run format` / `format:check` | Formata / confere a formatação (Prettier; arquivos `.md` ficam de fora) |
+| `npm test` / `test:watch` / `test:coverage` | Testes (Vitest) |
+| `npm run db:up` | Sobe o PostgreSQL local (Docker) |
+
+Ao fazer commit, o **Husky** roda o lint e a formatação nos arquivos alterados e confere se a mensagem segue o **Conventional Commits** (`feat: ...`, `fix: ...`, `docs: ...`).

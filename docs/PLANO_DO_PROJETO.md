@@ -23,13 +23,14 @@ Futuro   Pedido pelo site / clientes com login
 ---
 
 ## Etapa 0 — Fundação do projeto
-- [ ] Criar app Next.js + TypeScript (App Router, `src/`)
-- [ ] Tailwind CSS + shadcn/ui
-- [ ] ESLint, Prettier, Husky + lint-staged, Conventional Commits
-- [ ] Estrutura de pastas (ver README)
-- [ ] `.env.example`, `docker-compose.yml` com PostgreSQL local
-- [ ] GitHub Actions: lint + typecheck + testes
-- **Entrega:** projeto rodando localmente com página "em construção".
+- [x] Criar app Next.js + TypeScript (App Router, `src/`): Next.js 16, React 19
+- [x] Tailwind CSS 4 + base do shadcn/ui (`components.json`, `cn()`, tokens de cor). Os componentes serão adicionados conforme a necessidade, a partir da Etapa 1
+- [x] ESLint, Prettier, Husky + lint-staged, Conventional Commits (commitlint)
+- [x] Estrutura de pastas (ver README e `src/server/README.md`)
+- [x] `.env.example`, `docker-compose.yml` com PostgreSQL 17 local
+- [x] GitHub Actions: formatação + lint + typecheck + testes + build
+- [x] Vitest configurado, com o primeiro módulo de domínio testado (`src/server/menu/week-period.ts`: RN-10, RN-18, RN-19)
+- **Entrega:** ✅ projeto rodando localmente com página "em construção" (concluída em 2026-11-24).
 
 ## Etapa 1 — Banco de dados e autenticação
 - [ ] Validar a [modelagem](./MODELAGEM_DADOS.md)

@@ -1,0 +1,8 @@
+.next
+node_modules
+coverage
+package-lock.json
+docs/referencias
+
+# Documentação em Markdown é escrita à mão (tabelas legíveis no diff)
+*.md

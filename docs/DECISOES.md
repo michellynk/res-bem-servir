@@ -62,7 +62,7 @@
 ## ADR-005 — UI: Tailwind CSS + shadcn/ui; kanban com dnd-kit
 **Status:** 🟡 Proposta
 
-**Decisão:** **Tailwind CSS** + **shadcn/ui** (componentes acessíveis), **dnd-kit** para arrastar no kanban, **TanStack Query** para atualização periódica dos pedidos (polling a cada ~10s no MVP; tempo real via SSE ou Supabase Realtime se precisar).
+**Decisão:** **Tailwind CSS 4** + **shadcn/ui** (componentes acessíveis, copiados para `src/components/ui` com `npx shadcn add <componente>`), **dnd-kit** para arrastar no kanban, **TanStack Query** para atualização periódica dos pedidos (polling a cada ~10s no MVP; tempo real via SSE ou Supabase Realtime se precisar).
 
 ---
 

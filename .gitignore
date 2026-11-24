@@ -1,7 +1,27 @@
+# dependências
 node_modules/
+.pnp
+.pnp.*
+
+# build / next.js
 .next/
-.env
-.env*.local
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+
+# testes
 coverage/
+playwright-report/
+test-results/
+
+# variáveis de ambiente (dados sensíveis — ADR-008)
+.env
+.env*
+!.env.example
+
+# diversos
 *.log
+*.pem
 .DS_Store

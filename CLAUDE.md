@@ -12,4 +12,7 @@
 - Ao concluir itens do plano, marque o checklist em `docs/PLANO_DO_PROJETO.md`.
 - A **impressão do cardápio** segue o exemplo em `docs/referencias/cardapio-exemplo.jpg`.
 - Valores que podem mudar (horário limite, envios, preços) ficam em `Setting` com padrão em `src/server/settings/defaults.ts`. Mantenha a tabela "Onde alterar configurações" (estudo §6 e README) em dia.
-- Regras de negócio ficam em `src/server/` (testáveis), não em componentes React.
+- Regras de negócio ficam em `src/server/` (testáveis), não em componentes React. Cada regra tem teste ao lado (`*.test.ts`) e cita o código `RN-XX`.
+- O projeto usa **Next.js 16**: antes de escrever código do Next, consulte `AGENTS.md` e `node_modules/next/dist/docs/`.
+- Antes de commitar, rode: `npm run format:check && npm run lint && npm run typecheck && npm test`.
+- Commits seguem o Conventional Commits, em português (ex.: `feat: editor do cardápio`).
