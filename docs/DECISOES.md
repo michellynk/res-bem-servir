@@ -40,9 +40,9 @@
 **Decisão:** usar a **WhatsApp Business Cloud API** oficial no **modo coexistência**: o número atual do WhatsApp Business é conectado à API pelo *Embedded Signup* e continua funcionando no app do celular. O chatbot é uma **máquina de estados** própria, persistida em `Conversation`, sem depender de plataformas de chatbot de terceiros.
 
 **Consequências:**
-- O número não muda e as conversas aparecem no celular da administradora.
+- O número não muda e as conversas aparecem no celular da gerente.
 - Mensagens enviadas pelo app continuam gratuitas. As enviadas pela API seguem a tabela da Meta, e o envio ativo do cardápio é um **template de marketing**, cobrado por mensagem e com aprovação prévia.
-- O webhook recebe também as mensagens que a administradora envia pelo app (eventos de "eco"), o que permite **pausar o bot** naquela conversa (RN-29).
+- O webhook recebe também as mensagens que a gerente envia pelo app (eventos de "eco"), o que permite **pausar o bot** naquela conversa (RN-29).
 - Aparelhos vinculados (WhatsApp Web/Desktop) são desconectados na ativação, e algumas funções do app podem ficar limitadas. Conferir a lista atual da Meta antes de ativar.
 - Limite de vazão de 20 mensagens/s por número, mais que suficiente para o volume do restaurante.
 
@@ -55,7 +55,7 @@
 ## ADR-004 — Autenticação com Auth.js e papéis
 **Status:** 🟡 Proposta
 
-**Decisão:** **Auth.js (NextAuth v5)** com login por e-mail e senha (hash com argon2/bcrypt) para a administradora. Autorização pelo campo `role` do `User`, verificada em middleware e na camada de servidor. No futuro, clientes podem entrar por **código via WhatsApp/SMS** (OTP), já que o telefone é a identidade natural deles.
+**Decisão:** **Auth.js (NextAuth v5)** com login por e-mail e senha (hash com argon2/bcrypt) para a gerente. Autorização pelo campo `role` do `User`, verificada em middleware e na camada de servidor. No futuro, clientes podem entrar por **código via WhatsApp/SMS** (OTP), já que o telefone é a identidade natural deles.
 
 ---
 

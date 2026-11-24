@@ -43,7 +43,7 @@ Fluxo central: **cardápio → chatbot → pedidos**.
 - Cardápio **do dia** (a semana inteira não é exposta, para proteger contra cópia)
 - Aviso de feriado/dia fechado
 
-**Painel da administradora**
+**Painel da gerente**
 - 📋 **Cardápio semanal** a partir de um modelo personalizável (seções, itens fixos, título e rodapé), com rascunho/publicação e **impressão** no formato atual ([exemplo](docs/referencias/cardapio-exemplo.jpg))
 - 🤖 **Chatbot**: edição dos textos e envio do cardápio da semana aos clientes
 - ⚙️ **Configurações**: horário limite de pedidos, dia/hora do envio, tamanhos e preços das marmitas
@@ -85,7 +85,7 @@ res-bem-servir/
 ├── src/
 │   ├── app/
 │   │   ├── (public)/           # Site público
-│   │   ├── admin/              # Painel da administradora
+│   │   ├── admin/              # Painel da gerente
 │   │   └── api/whatsapp/       # Webhook do chatbot
 │   ├── components/             # Componentes de UI
 │   ├── server/                 # Regras de negócio (domínio)
@@ -119,10 +119,11 @@ res-bem-servir/
 **Chatbot (WhatsApp Business)**
 - ✅ RN-20/21: introdução + opções 1/2/3/4; textos editáveis pelo painel.
 - ✅ RN-80: opção **4. Falar com atendente**: o bot pausa e avisa no painel.
+- ✅ RN-82: o bot atende das **10h às 14h** (configurável).
 - ✅ RN-81: **fora do horário o bot não atende**: só avisa o horário e não anota pedidos.
 - ✅ RN-16: o cliente pede o cardápio pelo chat quando quiser.
-- ✅ RN-27: **um envio por semana** do cardápio aos clientes com opt-in, num dia útil (padrão: segunda às 11h, configurável).
-- 🟡 RN-29: o bot pausa na conversa quando a administradora responde pelo celular.
+- ✅ RN-27: **um envio por semana** do cardápio aos clientes com opt-in, num dia útil (padrão: segunda às 10h, configurável).
+- 🟡 RN-29: o bot pausa na conversa quando a gerente responde pelo celular.
 
 **Pedidos**
 - ✅ RN-30/31: kanban Para fazer → Em preparação → Finalizado.
@@ -137,6 +138,7 @@ res-bem-servir/
 - 🟡 RN-76: região = **lista de bairros**; o cliente escolhe o bairro no chat (detalhes na implementação).
 - ✅ RN-77: **sem taxa de entrega** por enquanto, mas o sistema já prevê taxa por bairro.
 - ✅ RN-78/79: pagamento **na retirada**, **na entrega** ou **Pix**; dados do Pix ficam só no `.env`.
+- 🟡 RN-79b: conferência do Pix é **manual**; o pedido mostra "Pix – conferir pagamento".
 - ❌ RN-38: não há aviso ao cliente quando a marmita fica pronta.
 
 **Feedbacks**
@@ -144,7 +146,7 @@ res-bem-servir/
 
 **Usuários**
 - ✅ RN-60/61: painel restrito; modelagem já prevê `CUSTOMER` e `STAFF`.
-- 🟡 RN-62: além da administradora, só a **gerente** (caixa) usa o sistema, com login próprio.
+- ✅ RN-62: a **gerente** é a única usuária do painel, com **acesso total**.
 
 ## Onde alterar configurações
 
@@ -165,9 +167,6 @@ Regras que mudam com frequência ficam no painel, não no código. Tabela comple
 
 Lista completa em [docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto](docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto). As que mais pesam:
 
-- **Q-20**: o bot deve começar a atender antes das 11h? Do jeito atual, pedidos com entrega só podem ser feitos das 11h00 às 11h30.
-- **Q-21**: o que a gerente pode fazer no sistema?
-- **Q-19**: no Pix, o cliente manda comprovante e alguém confere?
 - **Q-16**: detalhes da entrega (bairros, taxa), a rever na implementação.
 
 ## Documentação

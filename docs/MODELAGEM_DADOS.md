@@ -119,6 +119,7 @@ erDiagram
         int deliveryFeeCents
         string addressReference "ponto de referência"
         PaymentMethod paymentMethod
+        datetime paymentConfirmedAt "Pix conferido (RN-79b)"
         string notes "observação, impressa em destaque"
         int totalCents
         string cancelReason
@@ -204,7 +205,7 @@ erDiagram
 
 | Enum | Valores |
 |------|---------|
-| `Role` | `ADMIN` (administradora), `STAFF` (gerente, RN-62), `CUSTOMER` (futuro) |
+| `Role` | `ADMIN` (gerente, acesso total, RN-62), `STAFF` (reservado para funcionários), `CUSTOMER` (futuro) |
 | `PaymentMethod` | `ON_PICKUP` (na retirada), `ON_DELIVERY` (na entrega), `PIX` |
 | `MenuStatus` | `DRAFT`, `PUBLISHED` |
 | `OrderStatus` | `TODO` (Para fazer), `IN_PREPARATION` (Em preparação), `DONE` (Finalizado), `CANCELLED` |
@@ -213,7 +214,7 @@ erDiagram
 | `FeedbackType` | `REQUEST` (Solicitação), `COMPLIMENT` (Elogio), `COMPLAINT` (Reclamação) |
 | `FeedbackStatus` | `NEW`, `READ`, `RESOLVED` |
 | `Direction` | `INBOUND`, `OUTBOUND` |
-| `MessageAuthor` | `CUSTOMER`, `BOT`, `HUMAN` (administradora pelo app, recebida como eco na coexistência) |
+| `MessageAuthor` | `CUSTOMER`, `BOT`, `HUMAN` (gerente pelo app, recebida como eco na coexistência) |
 | `BroadcastKind` | `WEEKLY_MENU` (outros tipos podem ser adicionados depois) |
 | `BroadcastStatus` | `SCHEDULED`, `SENDING`, `DONE`, `FAILED` |
 | `DeliveryStatus` | `PENDING`, `SENT`, `DELIVERED`, `READ`, `FAILED` |
@@ -230,11 +231,11 @@ erDiagram
 
 - `MenuTemplate.title`: "RBS – REFEIÇÕES BEM SERVIR"
 - `MenuTemplate.footerNote`: "OBS.: Na falta de produtos no mercado, o cardápio poderá sofrer alterações."
-- `MarmitaSize`: Pequena, Grande (preço cadastrado e editado pela administradora no painel)
+- `MarmitaSize`: Pequena, Grande (preço cadastrado e editado pela gerente no painel)
 
 ## Observações
 
-- `MenuItem.isFixed` indica que o item veio do modelo; a administradora ainda pode editá-lo ou removê-lo naquele dia.
+- `MenuItem.isFixed` indica que o item veio do modelo; a gerente ainda pode editá-lo ou removê-lo naquele dia.
 - `MenuWeek.title` e `footerNote` são copiados do modelo ao criar a semana, para que mudar o modelo não altere semanas já impressas.
 - `OrderItemChoice` guarda as **carnes escolhidas** (até `orders.maxMeatChoices`, padrão 2, RN-70), com retrato do nome. Complementos não são gravados um a um: vão todos por padrão (RN-71), e exceções ficam na observação do pedido (RN-73).
 - `MenuSection` ganhará um campo para marcar qual seção é "de escolha" (Carnes) e qual vai por padrão (Complementos) ou separada (Saladas), para que isso continue funcionando se as seções forem renomeadas.

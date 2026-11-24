@@ -1,6 +1,7 @@
 # Instruções para assistentes de IA
 
 - Idioma do projeto e da documentação: **português (Brasil)**.
+- Na documentação e no sistema, a usuária do painel é sempre chamada de **gerente** (nunca por parentesco ou nome pessoal).
 - Antes de implementar, leia `docs/ESTUDO_DE_NEGOCIO.md` e `docs/PLANO_DO_PROJETO.md`.
 - **Sempre que uma regra de negócio for definida ou alterada:**
   1. registre/atualize em `docs/ESTUDO_DE_NEGOCIO.md` (código `RN-XX`, status, e uma linha no histórico de alterações);

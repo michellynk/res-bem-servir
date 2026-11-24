@@ -1,6 +1,6 @@
 # Plano do Projeto — RBS Refeições Bem Servir
 
-> Plano incremental. Cada etapa entrega algo **utilizável** e é validada com a administradora antes de seguir.
+> Plano incremental. Cada etapa entrega algo **utilizável** e é validada com a gerente antes de seguir.
 > Regras de negócio: [ESTUDO_DE_NEGOCIO.md](./ESTUDO_DE_NEGOCIO.md) · Dados: [MODELAGEM_DADOS.md](./MODELAGEM_DADOS.md) · Decisões técnicas: [DECISOES.md](./DECISOES.md)
 
 ## Visão geral
@@ -34,12 +34,12 @@ Futuro   Pedido pelo site / clientes com login
 ## Etapa 1 — Banco de dados e autenticação
 - [ ] Validar a [modelagem](./MODELAGEM_DADOS.md)
 - [ ] `schema.prisma` + primeira migração
-- [ ] Seed: usuária admin e usuária gerente (`STAFF`), modelo do cardápio atual (Carnes/Complementos/Saladas + itens fixos), tamanhos Pequena/Grande, feriados nacionais do ano
+- [ ] Seed: usuária gerente (`ADMIN`), modelo do cardápio atual (Carnes/Complementos/Saladas + itens fixos), tamanhos Pequena/Grande, feriados nacionais do ano
 - [ ] Módulo de configurações (`Setting` + valores padrão em `src/server/settings/defaults.ts`)
-- [ ] Auth.js com login de e-mail/senha; middleware protegendo `/admin`; permissões por papel (administradora × gerente, Q-21)
+- [ ] Auth.js com login de e-mail/senha; middleware protegendo `/admin`; acesso total para `ADMIN` (RN-62)
 - [ ] `src/lib/env.ts` validando as variáveis de ambiente (inclusive `PIX_KEY`, `PIX_RECEIVER_NAME`) e `.env.example` atualizado (ADR-008)
 - [ ] Layout base do painel (menu lateral: Cardápio, Pedidos, Feedbacks, Chatbot, Configurações)
-- **Entrega:** a administradora faz login e vê o painel vazio.
+- **Entrega:** a gerente faz login e vê o painel vazio.
 
 ## Etapa 2 — Gestão do cardápio
 - [ ] Editor do **modelo** do cardápio: seções (criar, renomear, reordenar), itens fixos, título e rodapé (RN-11)
@@ -66,8 +66,8 @@ Futuro   Pedido pelo site / clientes com login
 - [ ] Lançamento manual de pedido (canal `BALCAO`), útil antes do bot ficar pronto
 - [ ] Pedido com dia (dia útil da semana atual, RN-74), tamanho, até 2 carnes (RN-70) e observação (RN-73)
 - [ ] Horário limite configurável, desligado por padrão, sugestão 13:00 (RN-35)
-- [ ] Entrega: cadastro de bairros atendidos, limite de 11h30, taxa prevista (zerada) (RN-75 a RN-77). ⚠️ Rever a Q-16 com a administradora antes de implementar
-- [ ] Forma de pagamento no pedido: retirada, entrega ou Pix (RN-78)
+- [ ] Entrega: cadastro de bairros atendidos, limite de 11h30, taxa prevista (zerada) (RN-75 a RN-77). ⚠️ Rever a Q-16 com a gerente antes de implementar
+- [ ] Forma de pagamento no pedido: retirada, entrega ou Pix (RN-78); selo "Pix – conferir pagamento" e marcação de conferido (RN-79b)
 - [ ] **Impressão de pedidos em A4**, vários por folha com linha de corte, observação em destaque e dados completos de entrega (RN-32, RN-32a)
 - **Entrega:** produção do dia organizada no kanban.
 
@@ -87,7 +87,7 @@ Futuro   Pedido pelo site / clientes com login
 - [ ] 3: tipo + mensagem → cria `Feedback`
 - [ ] **Configuração dos textos do bot** no painel (+ pré-visualização da conversa)
 - [ ] Opção 4 "Falar com atendente" + aviso de "aguardando atendimento" no painel (RN-80)
-- [ ] Horário de atendimento: fora dele, só aviso e nenhum pedido (RN-81; ver Q-20)
+- [ ] Horário de atendimento do bot (padrão 10h–14h): fora dele, só aviso e nenhum pedido (RN-81, RN-82)
 - [ ] Pix: mostrar chave e recebedor do `.env` quando o cliente escolher Pix (RN-79)
 - [ ] Histórico de conversas no painel (consulta)
 - [ ] Testes automatizados de cada fluxo da conversa
@@ -104,7 +104,7 @@ Futuro   Pedido pelo site / clientes com login
 ## Etapa 8 — Deploy e operação
 - [ ] Deploy Vercel + banco gerenciado + domínio
 - [ ] Backups do banco, monitoramento de erros (Sentry)
-- [ ] Manual de uso para a administradora (com prints)
+- [ ] Manual de uso para a gerente (com prints)
 - **Entrega:** sistema em produção.
 
 ## Futuro
