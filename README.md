@@ -108,16 +108,17 @@ res-bem-servir/
 
 **Cardápio**
 - ✅ RN-10: cardápio semanal, organizado por dia.
-- ✅ RN-11: modelo **totalmente personalizável** (seções/colunas, ordem, itens fixos, título e rodapé). Padrão: Carnes · Complementos · Saladas, como no cardápio atual.
+- ✅ RN-11: modelo **totalmente personalizável** (seções/colunas, ordem, itens fixos, título e rodapé). Padrão: Carnes · Complementos · Saladas, como no cardápio atual. Itens pré-preenchidos também são editáveis.
 - ✅ RN-13: o chatbot usa sempre o cardápio publicado mais recente.
-- ✅ RN-14/18: impressão em 1 página A4 no layout do [exemplo](docs/referencias/cardapio-exemplo.jpg), com período "DD A DD/MM/AAAA".
+- ✅ RN-14/18: impressão em 1 página A4 no layout do [exemplo](docs/referencias/cardapio-exemplo.jpg), com período "DD A DD/MM/AAAA" calculado pela semana cadastrada.
+- ✅ RN-19: o cardápio é cadastrado para a **próxima semana**.
 - ✅ RN-15: o site público mostra **só o cardápio do dia**.
 - 🟡 RN-12: rascunho → publicado.
 
 **Chatbot (WhatsApp Business)**
 - ✅ RN-20/21: introdução + opções 1/2/3; textos editáveis pelo painel.
-- ✅ RN-27: **envio ativo do cardápio da semana** aos clientes com opt-in, durante a semana (padrão: segunda de manhã, configurável).
-- 🟡 RN-28: envio diário do cardápio do dia (opcional, desligado).
+- ✅ RN-16: o cliente pede o cardápio pelo chat quando quiser.
+- ✅ RN-27: **um envio por semana** do cardápio aos clientes com opt-in, num dia útil (padrão: segunda de manhã, configurável).
 - 🟡 RN-29: o bot pausa na conversa quando a administradora responde pelo celular.
 
 **Pedidos**
@@ -125,7 +126,11 @@ res-bem-servir/
 - ✅ RN-32: pedidos imprimíveis.
 - ✅ RN-33: pedido registra o canal de origem (WhatsApp, site, balcão).
 - ✅ RN-35: **horário limite desligado por padrão**; se ativado, sugestão de 13:00 (ver [onde alterar](docs/ESTUDO_DE_NEGOCIO.md#6-onde-alterar-configurações)).
-- ✅ RN-39: marmitas **Pequena** e **Grande**; tamanhos e preços cadastráveis.
+- ✅ RN-39: marmitas **Pequena** e **Grande**; **preços editáveis** a qualquer momento no painel.
+- ✅ RN-70/71/72: o cliente escolhe **até 2 carnes**; complementos vão por padrão; salada vai separada.
+- ✅ RN-73: **observação** livre no pedido, impressa em destaque.
+- ✅ RN-74: pode pedir para **qualquer dia útil** da semana.
+- 🟡 RN-75: **entrega** só na região perto de Pinhais, para pedidos até **11h30** (região a definir).
 
 **Feedbacks**
 - ✅ RN-40: Solicitações, Elogios e Reclamações em seções separadas.
@@ -141,6 +146,8 @@ Regras que mudam com frequência ficam no painel, não no código. Tabela comple
 |-------|------------------|
 | Horário limite de pedidos | Painel → Configurações → Pedidos · chave `orders.cutoff.*` · padrão em `src/server/settings/defaults.ts` |
 | Dia/hora do envio do cardápio | Painel → Configurações → Chatbot · chave `broadcast.weekly.*` |
+| Máximo de carnes por marmita | Painel → Configurações → Pedidos · chave `orders.maxMeatChoices` (padrão 2) |
+| Entrega: horário limite e regiões | Painel → Configurações → Entrega · chave `delivery.cutoff.time` (padrão 11:30) + tabela `DeliveryArea` |
 | Tamanhos e preços das marmitas | Painel → Cardápio → Tamanhos e preços |
 | Seções, itens fixos, título e rodapé do cardápio | Painel → Cardápio → Modelo |
 
@@ -148,10 +155,10 @@ Regras que mudam com frequência ficam no painel, não no código. Tabela comple
 
 Lista completa em [docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto](docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto). As que mais pesam:
 
-- **Q-05**: preços da marmita Pequena e da Grande (fixos ou variam por prato?).
-- **Q-14**: o que compõe a marmita (o cliente escolhe a carne? quantos itens por tamanho?).
-- **Q-15**: pode pedir marmita para dias futuros da semana?
-- **Q-07**: tem entrega ou só retirada?
+- **Q-16**: como delimitar a região de entrega (bairros, CEPs ou km)? Tem taxa?
+- **Q-17**: o limite de 2 carnes vale para os dois tamanhos?
+- **Q-18**: na sexta, pode pedir para a semana seguinte, se o cardápio já estiver publicado?
+- **Q-08**: formato da impressão dos pedidos (folha, etiqueta, impressora térmica?).
 
 ## Documentação
 

@@ -32,7 +32,7 @@ Futuro   Pedido pelo site / clientes com login
 - **Entrega:** projeto rodando localmente com página "em construção".
 
 ## Etapa 1 — Banco de dados e autenticação
-- [ ] Validar a [modelagem](./MODELAGEM_DADOS.md) (pendentes: Q-05 preços, Q-14 composição da marmita)
+- [ ] Validar a [modelagem](./MODELAGEM_DADOS.md) (pendente: Q-16 região de entrega)
 - [ ] `schema.prisma` + primeira migração
 - [ ] Seed: usuária admin, modelo do cardápio atual (Carnes/Complementos/Saladas + itens fixos), tamanhos Pequena/Grande, feriados nacionais do ano
 - [ ] Módulo de configurações (`Setting` + valores padrão em `src/server/settings/defaults.ts`)
@@ -42,12 +42,12 @@ Futuro   Pedido pelo site / clientes com login
 
 ## Etapa 2 — Gestão do cardápio
 - [ ] Editor do **modelo** do cardápio: seções (criar, renomear, reordenar), itens fixos, título e rodapé (RN-11)
-- [ ] "Nova semana": gera seg–sex a partir do modelo ou copiando a semana anterior
+- [ ] "Nova semana": sugere a próxima semana (RN-19), calcula o período do cabeçalho (RN-18) e gera seg–sex a partir do modelo ou copiando a semana anterior
 - [ ] Marcação automática de feriados; marcar/desmarcar dia fechado
-- [ ] Editor do cardápio por dia (rascunho → publicar)
+- [ ] Editor do cardápio por dia, inclusive dos itens pré-preenchidos (rascunho → publicar)
 - [ ] Gestão de feriados (lista + cadastro manual)
 - [ ] **Impressão do cardápio** no layout do [exemplo](./referencias/cardapio-exemplo.jpg), 1 página A4 (RN-14, RN-18). ✅ Exemplo recebido.
-- [ ] Tamanhos de marmita e preços (RN-39)
+- [ ] Tela de tamanhos e **preços editáveis** a qualquer momento (RN-39)
 - [ ] 🔔 Em paralelo: criar conta Meta Business (Business Manager), verificar a empresa e conferir os requisitos de **coexistência** para o número atual do WhatsApp Business (ADR-003)
 - **Entrega:** ela monta, publica e imprime o cardápio da semana pelo sistema.
 
@@ -63,8 +63,10 @@ Futuro   Pedido pelo site / clientes com login
 - [ ] **Kanban**: Para fazer → Em preparação → Finalizado (arrastar e soltar)
 - [ ] Filtro por dia, contadores por coluna, atualização automática
 - [ ] Lançamento manual de pedido (canal `BALCAO`), útil antes do bot ficar pronto
+- [ ] Pedido com dia (qualquer dia útil, RN-74), tamanho, até 2 carnes (RN-70) e observação (RN-73)
 - [ ] Horário limite configurável, desligado por padrão, sugestão 13:00 (RN-35)
-- [ ] **Impressão de pedidos** (individual e lista do dia, conforme Q-08)
+- [ ] Entrega: regiões atendidas e limite de 11h30 (RN-75, RN-76; região depende da Q-16)
+- [ ] **Impressão de pedidos** com a observação em destaque (RN-73; formato conforme Q-08)
 - **Entrega:** produção do dia organizada no kanban.
 
 ## Etapa 5 — Solicitações, elogios e reclamações
@@ -79,18 +81,17 @@ Futuro   Pedido pelo site / clientes com login
 - [ ] Tratar ecos de mensagens enviadas pelo app e **pausar o bot** na conversa (RN-29)
 - [ ] Máquina de estados: boas-vindas → menu (1, 2, 3) → subfluxos
 - [ ] 1: cardápio publicado do banco
-- [ ] 2: fluxo de pedido completo → cria `Order` no kanban
+- [ ] 2: fluxo de pedido completo (dia → tamanho → carnes → quantidade → observação → retirada/entrega) → cria `Order` no kanban
 - [ ] 3: tipo + mensagem → cria `Feedback`
 - [ ] **Configuração dos textos do bot** no painel (+ pré-visualização da conversa)
 - [ ] Histórico de conversas no painel (consulta)
 - [ ] Testes automatizados de cada fluxo da conversa
 - **Entrega:** atendimento automatizado no número do restaurante.
 
-## Etapa 7 — Envio ativo do cardápio (RN-27, RN-28)
+## Etapa 7 — Envio semanal do cardápio (RN-27)
 - [ ] Lista de clientes com opt-in (e opção de sair: "SAIR")
 - [ ] Template de marketing aprovado na Meta
-- [ ] Envio agendado durante a semana (padrão: segunda de manhã, configurável) + envio manual pelo painel
-- [ ] Envio diário opcional, desligado por padrão (RN-28)
+- [ ] **Um envio por semana** agendado num dia útil (padrão: segunda de manhã, configurável) + envio manual pelo painel
 - [ ] Botão "Enviar cardápio da semana" com confirmação e estimativa de custo
 - [ ] Relatório de envio (enviados, falhas)
 - **Entrega:** fim do envio manual.

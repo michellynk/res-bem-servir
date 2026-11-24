@@ -2,6 +2,7 @@
 
 > Versão para validar. Ela será convertida em `prisma/schema.prisma` na Etapa 1 do [plano](./PLANO_DO_PROJETO.md).
 > Atualizado em 2026-11-23: cardápio personalizável (RN-11), tamanhos de marmita (RN-39), configurações editáveis (§6 do estudo), envio ativo (RN-27) e pausa do bot (RN-29).
+> Atualizado em 2026-11-24: escolhas da marmita (RN-70 a RN-73), entrega por região (RN-75), envio só semanal (RN-27).
 
 ## Princípios
 
@@ -34,6 +35,9 @@ erDiagram
     MenuDay ||--o{ Order : "pedidos do dia"
     Order ||--o{ OrderItem : contem
     MarmitaSize ||--o{ OrderItem : "tamanho"
+    OrderItem ||--o{ OrderItemChoice : "carnes escolhidas"
+    MenuItem ||--o{ OrderItemChoice : "escolhido"
+    DeliveryArea ||--o{ Order : "região"
 
     User {
         uuid id
@@ -62,6 +66,7 @@ erDiagram
         uuid id
         uuid templateId FK
         string name "CARNES"
+        SectionKind kind
         int sortOrder
         bool active
     }
@@ -109,8 +114,10 @@ erDiagram
         OrderStatus status
         Channel channel
         Fulfillment fulfillment
+        uuid deliveryAreaId FK
         string address
-        string notes
+        int deliveryFeeCents
+        string notes "observação, impressa em destaque"
         int totalCents
         string cancelReason
     }
@@ -121,8 +128,20 @@ erDiagram
         string sizeNameSnapshot
         int unitPriceCents
         int quantity
-        json selections "escolhas (Q-14)"
         string notes
+    }
+    OrderItemChoice {
+        uuid id
+        uuid orderItemId FK
+        uuid menuItemId FK
+        string nameSnapshot
+        string sectionSnapshot "CARNES"
+    }
+    DeliveryArea {
+        uuid id
+        string name "bairro / região"
+        int feeCents
+        bool active
     }
     Feedback {
         uuid id
@@ -191,28 +210,31 @@ erDiagram
 | `FeedbackStatus` | `NEW`, `READ`, `RESOLVED` |
 | `Direction` | `INBOUND`, `OUTBOUND` |
 | `MessageAuthor` | `CUSTOMER`, `BOT`, `HUMAN` (administradora pelo app, recebida como eco na coexistência) |
-| `BroadcastKind` | `WEEKLY_MENU`, `DAILY_MENU` |
+| `BroadcastKind` | `WEEKLY_MENU` (outros tipos podem ser adicionados depois) |
 | `BroadcastStatus` | `SCHEDULED`, `SENDING`, `DONE`, `FAILED` |
 | `DeliveryStatus` | `PENDING`, `SENT`, `DELIVERED`, `READ`, `FAILED` |
 | `HolidaySource` | `NATIONAL_API`, `MANUAL` |
+| `SectionKind` | `CHOICE` (cliente escolhe, ex.: Carnes), `INCLUDED` (vai por padrão, ex.: Complementos), `SEPARATE` (vai separado, ex.: Saladas) |
 
 ## Seed inicial (reproduz o cardápio atual)
 
 | Seção | Ordem | Itens fixos |
 |-------|-------|-------------|
-| CARNES | 1 | BIFE ou FILÉ de FRANGO (última linha) |
-| COMPLEMENTOS | 2 | ARROZ – FEIJÃO (primeira linha) |
-| SALADAS | 3 | SALADAS VARIADAS |
+| CARNES (`CHOICE`) | 1 | BIFE ou FILÉ de FRANGO (última linha) |
+| COMPLEMENTOS (`INCLUDED`) | 2 | ARROZ – FEIJÃO (primeira linha) |
+| SALADAS (`SEPARATE`) | 3 | SALADAS VARIADAS |
 
 - `MenuTemplate.title`: "RBS – REFEIÇÕES BEM SERVIR"
 - `MenuTemplate.footerNote`: "OBS.: Na falta de produtos no mercado, o cardápio poderá sofrer alterações."
-- `MarmitaSize`: Pequena, Grande (preços a definir, Q-05)
+- `MarmitaSize`: Pequena, Grande (preço cadastrado e editado pela administradora no painel)
 
 ## Observações
 
 - `MenuItem.isFixed` indica que o item veio do modelo; a administradora ainda pode editá-lo ou removê-lo naquele dia.
 - `MenuWeek.title` e `footerNote` são copiados do modelo ao criar a semana, para que mudar o modelo não altere semanas já impressas.
-- `OrderItem.selections` (JSON) guarda as escolhas do cliente (ex.: carne escolhida) até a Q-14 definir a composição da marmita. Depois pode virar tabela própria.
+- `OrderItemChoice` guarda as **carnes escolhidas** (até `orders.maxMeatChoices`, padrão 2, RN-70), com retrato do nome. Complementos não são gravados um a um: vão todos por padrão (RN-71), e exceções ficam na observação do pedido (RN-73).
+- `MenuSection` ganhará um campo para marcar qual seção é "de escolha" (Carnes) e qual vai por padrão (Complementos) ou separada (Saladas), para que isso continue funcionando se as seções forem renomeadas.
+- `DeliveryArea` é provisória até a Q-16 definir como a região é delimitada (bairros, CEPs ou distância). `Order.deliveryFeeCents` guarda a taxa cobrada no momento do pedido.
 - `Conversation.state` guarda o passo atual da máquina de estados (ex.: `MAIN_MENU`, `ORDER_CHOOSE_SIZE`). `botPausedUntil` implementa RN-29.
 - `ChatMessage.waMessageId` único garante **idempotência**: o WhatsApp pode reenviar o mesmo webhook.
 - `Setting` guarda configurações e textos do bot por chave (`orders.cutoff.time`, `bot.greeting`...). Lista em [Onde alterar configurações](./ESTUDO_DE_NEGOCIO.md#6-onde-alterar-configurações).
