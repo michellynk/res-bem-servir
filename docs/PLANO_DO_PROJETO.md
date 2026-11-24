@@ -34,9 +34,10 @@ Futuro   Pedido pelo site / clientes com login
 ## Etapa 1 — Banco de dados e autenticação
 - [ ] Validar a [modelagem](./MODELAGEM_DADOS.md)
 - [ ] `schema.prisma` + primeira migração
-- [ ] Seed: usuária admin, modelo do cardápio atual (Carnes/Complementos/Saladas + itens fixos), tamanhos Pequena/Grande, feriados nacionais do ano
+- [ ] Seed: usuária admin e usuária gerente (`STAFF`), modelo do cardápio atual (Carnes/Complementos/Saladas + itens fixos), tamanhos Pequena/Grande, feriados nacionais do ano
 - [ ] Módulo de configurações (`Setting` + valores padrão em `src/server/settings/defaults.ts`)
-- [ ] Auth.js com login de e-mail/senha; middleware protegendo `/admin`
+- [ ] Auth.js com login de e-mail/senha; middleware protegendo `/admin`; permissões por papel (administradora × gerente, Q-21)
+- [ ] `src/lib/env.ts` validando as variáveis de ambiente (inclusive `PIX_KEY`, `PIX_RECEIVER_NAME`) e `.env.example` atualizado (ADR-008)
 - [ ] Layout base do painel (menu lateral: Cardápio, Pedidos, Feedbacks, Chatbot, Configurações)
 - **Entrega:** a administradora faz login e vê o painel vazio.
 
@@ -66,7 +67,8 @@ Futuro   Pedido pelo site / clientes com login
 - [ ] Pedido com dia (dia útil da semana atual, RN-74), tamanho, até 2 carnes (RN-70) e observação (RN-73)
 - [ ] Horário limite configurável, desligado por padrão, sugestão 13:00 (RN-35)
 - [ ] Entrega: cadastro de bairros atendidos, limite de 11h30, taxa prevista (zerada) (RN-75 a RN-77). ⚠️ Rever a Q-16 com a administradora antes de implementar
-- [ ] **Impressão de pedidos** com a observação em destaque (RN-73; formato conforme Q-08)
+- [ ] Forma de pagamento no pedido: retirada, entrega ou Pix (RN-78)
+- [ ] **Impressão de pedidos em A4**, vários por folha com linha de corte, observação em destaque e dados completos de entrega (RN-32, RN-32a)
 - **Entrega:** produção do dia organizada no kanban.
 
 ## Etapa 5 — Solicitações, elogios e reclamações
@@ -84,6 +86,9 @@ Futuro   Pedido pelo site / clientes com login
 - [ ] 2: fluxo de pedido completo (dia → tamanho → carnes → quantidade → observação → retirada/entrega) → cria `Order` no kanban
 - [ ] 3: tipo + mensagem → cria `Feedback`
 - [ ] **Configuração dos textos do bot** no painel (+ pré-visualização da conversa)
+- [ ] Opção 4 "Falar com atendente" + aviso de "aguardando atendimento" no painel (RN-80)
+- [ ] Horário de atendimento: fora dele, só aviso e nenhum pedido (RN-81; ver Q-20)
+- [ ] Pix: mostrar chave e recebedor do `.env` quando o cliente escolher Pix (RN-79)
 - [ ] Histórico de conversas no painel (consulta)
 - [ ] Testes automatizados de cada fluxo da conversa
 - **Entrega:** atendimento automatizado no número do restaurante.

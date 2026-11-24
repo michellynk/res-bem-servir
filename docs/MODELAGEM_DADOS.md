@@ -117,6 +117,8 @@ erDiagram
         uuid deliveryAreaId FK
         string address
         int deliveryFeeCents
+        string addressReference "ponto de referência"
+        PaymentMethod paymentMethod
         string notes "observação, impressa em destaque"
         int totalCents
         string cancelReason
@@ -159,6 +161,7 @@ erDiagram
         json context
         datetime lastInteractionAt
         datetime botPausedUntil
+        datetime handoffRequestedAt "pediu atendente"
     }
     ChatMessage {
         uuid id
@@ -201,7 +204,8 @@ erDiagram
 
 | Enum | Valores |
 |------|---------|
-| `Role` | `ADMIN`, `STAFF`, `CUSTOMER` |
+| `Role` | `ADMIN` (administradora), `STAFF` (gerente, RN-62), `CUSTOMER` (futuro) |
+| `PaymentMethod` | `ON_PICKUP` (na retirada), `ON_DELIVERY` (na entrega), `PIX` |
 | `MenuStatus` | `DRAFT`, `PUBLISHED` |
 | `OrderStatus` | `TODO` (Para fazer), `IN_PREPARATION` (Em preparação), `DONE` (Finalizado), `CANCELLED` |
 | `Channel` | `WHATSAPP`, `SITE`, `BALCAO` |
@@ -235,7 +239,8 @@ erDiagram
 - `OrderItemChoice` guarda as **carnes escolhidas** (até `orders.maxMeatChoices`, padrão 2, RN-70), com retrato do nome. Complementos não são gravados um a um: vão todos por padrão (RN-71), e exceções ficam na observação do pedido (RN-73).
 - `MenuSection` ganhará um campo para marcar qual seção é "de escolha" (Carnes) e qual vai por padrão (Complementos) ou separada (Saladas), para que isso continue funcionando se as seções forem renomeadas.
 - `DeliveryArea` é a **lista de bairros atendidos** (RN-76). `feeCents` começa em `0` (sem taxa, RN-77) e permite taxa por bairro no futuro. `Order.deliveryFeeCents` guarda a taxa cobrada no momento do pedido.
-- `Conversation.state` guarda o passo atual da máquina de estados (ex.: `MAIN_MENU`, `ORDER_CHOOSE_SIZE`). `botPausedUntil` implementa RN-29.
+- `Conversation.state` guarda o passo atual da máquina de estados (ex.: `MAIN_MENU`, `ORDER_CHOOSE_SIZE`). `botPausedUntil` implementa RN-29. `handoffRequestedAt` marca a conversa como "aguardando atendimento" (RN-80).
+- Os **dados do Pix não ficam no banco** (RN-79): são lidos do `.env`.
 - `ChatMessage.waMessageId` único garante **idempotência**: o WhatsApp pode reenviar o mesmo webhook.
 - `Setting` guarda configurações e textos do bot por chave (`orders.cutoff.time`, `bot.greeting`...). Lista em [Onde alterar configurações](./ESTUDO_DE_NEGOCIO.md#6-onde-alterar-configurações).
 - `Order.number` é sequencial e legível ("Pedido #42") para impressão e conversa.

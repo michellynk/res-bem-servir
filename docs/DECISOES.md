@@ -81,3 +81,14 @@
 - **GitHub Actions**: lint (ESLint), formatação (Prettier), checagem de tipos, testes (**Vitest** para domínio/chatbot, **Playwright** para fluxos críticos).
 - Commits no padrão **Conventional Commits**, branches por funcionalidade e PRs para `main`.
 - Variáveis sensíveis só em `.env` (nunca commitadas), com `.env.example` documentado.
+
+---
+
+## ADR-008 — Dados sensíveis só em variáveis de ambiente
+**Status:** ✅ Aceita
+
+**Contexto:** a chave Pix do restaurante (RN-79), os tokens da API do WhatsApp e o segredo de autenticação não podem vazar.
+
+**Decisão:** dados sensíveis ficam **só em variáveis de ambiente** (`.env` local, Environment Variables na Vercel). Nunca no código, no banco ou no Git. O `.env` está no `.gitignore`, e o `.env.example` lista os nomes das variáveis **sem valores reais**. As variáveis são validadas com Zod na inicialização (`src/lib/env.ts`), e o app não sobe se faltar alguma.
+
+**Consequências:** trocar a chave Pix exige alterar a variável no servidor e reiniciar o app, não dá para trocar pelo painel. Em troca, ninguém com acesso ao banco ou ao repositório vê esses dados.

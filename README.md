@@ -105,6 +105,7 @@ res-bem-servir/
 
 **Funcionamento**
 - ✅ RN-01/02: abre de segunda a sexta; feriados nesses dias são dias fechados.
+- ✅ RN-05/06: restaurante das **11h às 14h**; entregas até **12h**.
 
 **Cardápio**
 - ✅ RN-10: cardápio semanal, organizado por dia.
@@ -116,14 +117,16 @@ res-bem-servir/
 - 🟡 RN-12: rascunho → publicado.
 
 **Chatbot (WhatsApp Business)**
-- ✅ RN-20/21: introdução + opções 1/2/3; textos editáveis pelo painel.
+- ✅ RN-20/21: introdução + opções 1/2/3/4; textos editáveis pelo painel.
+- ✅ RN-80: opção **4. Falar com atendente**: o bot pausa e avisa no painel.
+- ✅ RN-81: **fora do horário o bot não atende**: só avisa o horário e não anota pedidos.
 - ✅ RN-16: o cliente pede o cardápio pelo chat quando quiser.
-- ✅ RN-27: **um envio por semana** do cardápio aos clientes com opt-in, num dia útil (padrão: segunda de manhã, configurável).
+- ✅ RN-27: **um envio por semana** do cardápio aos clientes com opt-in, num dia útil (padrão: segunda às 11h, configurável).
 - 🟡 RN-29: o bot pausa na conversa quando a administradora responde pelo celular.
 
 **Pedidos**
 - ✅ RN-30/31: kanban Para fazer → Em preparação → Finalizado.
-- ✅ RN-32: pedidos imprimíveis.
+- ✅ RN-32/32a: impressão em **A4**, vários pedidos por folha separados por linha de corte; pedidos com entrega trazem endereço e todos os dados da entrega.
 - ✅ RN-33: pedido registra o canal de origem (WhatsApp, site, balcão).
 - ✅ RN-35: **horário limite desligado por padrão**; se ativado, sugestão de 13:00 (ver [onde alterar](docs/ESTUDO_DE_NEGOCIO.md#6-onde-alterar-configurações)).
 - ✅ RN-39: marmitas **Pequena** e **Grande**; **preços editáveis** a qualquer momento no painel.
@@ -133,12 +136,15 @@ res-bem-servir/
 - ✅ RN-75: **entrega** só na região perto de Pinhais, para pedidos até **11h30**.
 - 🟡 RN-76: região = **lista de bairros**; o cliente escolhe o bairro no chat (detalhes na implementação).
 - ✅ RN-77: **sem taxa de entrega** por enquanto, mas o sistema já prevê taxa por bairro.
+- ✅ RN-78/79: pagamento **na retirada**, **na entrega** ou **Pix**; dados do Pix ficam só no `.env`.
+- ❌ RN-38: não há aviso ao cliente quando a marmita fica pronta.
 
 **Feedbacks**
 - ✅ RN-40: Solicitações, Elogios e Reclamações em seções separadas.
 
 **Usuários**
-- ✅ RN-60/61: só `ADMIN` acessa o painel; modelagem já prevê `CUSTOMER` e `STAFF`.
+- ✅ RN-60/61: painel restrito; modelagem já prevê `CUSTOMER` e `STAFF`.
+- 🟡 RN-62: além da administradora, só a **gerente** (caixa) usa o sistema, com login próprio.
 
 ## Onde alterar configurações
 
@@ -152,14 +158,16 @@ Regras que mudam com frequência ficam no painel, não no código. Tabela comple
 | Entrega: horário limite, bairros e taxa | Painel → Configurações → Entrega · chave `delivery.cutoff.time` (padrão 11:30) + tabela `DeliveryArea` (taxa padrão 0) |
 | Tamanhos e preços das marmitas | Painel → Cardápio → Tamanhos e preços |
 | Seções, itens fixos, título e rodapé do cardápio | Painel → Cardápio → Modelo |
+| Horário de funcionamento e de atendimento do bot | Painel → Configurações → Funcionamento / Chatbot · chaves `business.hours.*`, `bot.hours.*` |
+| **Dados do Pix** | ⚠️ Fora do painel: variáveis `PIX_KEY` e `PIX_RECEIVER_NAME` no `.env` / Vercel (ADR-008) |
 
 ## Questões em aberto
 
 Lista completa em [docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto](docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto). As que mais pesam:
 
-- **Q-08**: formato da impressão dos pedidos (folha, etiqueta, impressora térmica?).
-- **Q-10**: pagamento só na retirada/entrega ou Pix antecipado?
-- **Q-11**: horário de funcionamento; o bot responde fora dele?
+- **Q-20**: o bot deve começar a atender antes das 11h? Do jeito atual, pedidos com entrega só podem ser feitos das 11h00 às 11h30.
+- **Q-21**: o que a gerente pode fazer no sistema?
+- **Q-19**: no Pix, o cliente manda comprovante e alguém confere?
 - **Q-16**: detalhes da entrega (bairros, taxa), a rever na implementação.
 
 ## Documentação

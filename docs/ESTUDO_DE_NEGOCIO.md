@@ -57,6 +57,8 @@ Ela **não quer publicar o cardápio inteiro nas redes sociais**, por receio de 
 | RN-02 | Feriados que caem de segunda a sexta são dias **fechados**: sem cardápio e sem pedidos. | ✅ |
 | RN-03 | Feriados nacionais são importados automaticamente (BrasilAPI). Feriados estaduais/municipais e folgas pontuais são cadastrados manualmente pela administradora. | 🟡 |
 | RN-04 | A administradora pode marcar qualquer dia útil como fechado (ex.: emenda, imprevisto). | 🟡 |
+| RN-05 | **Horário de funcionamento** do restaurante: **11h00 às 14h00**. | ✅ |
+| RN-06 | **Entregas** acontecem até **12h00**. Os pedidos com entrega vão até 11h30 (RN-75). | ✅ |
 
 ### 3.2 Cardápio
 
@@ -115,7 +117,7 @@ Cliente manda qualquer mensagem
       1. Ver cardápio
       2. Pedir marmita
       3. Solicitações, elogios ou reclamações
-      (0. Falar com atendente — proposta, ver Q-06)
+      4. Falar com atendente
 
 1 → cardápio do dia (e opção de ver a semana) → volta ao menu
 2 → fluxo de pedido:
@@ -127,16 +129,23 @@ Cliente manda qualquer mensagem
       → observação livre (ex.: "sem feijão", "trocar farofa por batata") (RN-73)
       → retirada ou entrega (entrega só na região atendida e até 11h30, RN-75)
         se entrega: escolher o BAIRRO numa lista + digitar o endereço (RN-76)
-      → resumo com valor → cliente CONFIRMA
+      → forma de pagamento: na retirada, na entrega ou Pix (RN-78)
+      → resumo com valor (e chave Pix, se escolheu Pix) → cliente CONFIRMA
       → pedido criado com status "Para fazer" e aparece no kanban
 3 → escolher tipo: Solicitação | Elogio | Reclamação
       → cliente escreve a mensagem
       → registro criado e aparece na aba correspondente do painel
+4 → bot avisa que uma atendente vai responder
+      → pausa o bot nessa conversa (RN-29)
+      → conversa aparece no painel como "aguardando atendimento" (RN-80)
+
+Fora do horário de atendimento (RN-81):
+  qualquer mensagem → bot avisa o horário de funcionamento e NÃO anota pedidos
 ```
 
 | Código | Regra | Status |
 |--------|-------|--------|
-| RN-20 | O bot faz uma **introdução** (saudação) e apresenta as opções 1, 2 e 3. | ✅ |
+| RN-20 | O bot faz uma **introdução** (saudação) e apresenta as opções 1, 2, 3 e 4 (falar com atendente). | ✅ |
 | RN-21 | Os **textos do bot** (saudação, títulos das opções, mensagens de confirmação, despedida) são **editáveis** no painel. | ✅ |
 | RN-22 | O cardápio exibido pelo bot vem do cardápio **publicado** no banco. | ✅ |
 | RN-23 | Em dias fechados/feriados o bot informa que o restaurante não abre e mostra o próximo dia de funcionamento. | 🟡 |
@@ -145,6 +154,8 @@ Cliente manda qualquer mensagem
 | RN-26 | Mensagens fora do fluxo esperado → bot repete as opções válidas. | 🟡 |
 | RN-27 | **Envio ativo do cardápio da semana**: **um envio por semana**, num dia útil, para os clientes com opt-in (padrão: segunda-feira de manhã; dia e horário configuráveis), agendado ou disparado pelo painel. | ✅ |
 | RN-28 | ~~Envio diário do cardápio do dia.~~ Descartada: o envio ativo é só semanal (RN-27); no resto da semana o cliente pede o cardápio pelo chat (RN-16). | ❌ |
+| RN-80 | Opção **4. Falar com atendente**: o bot avisa o cliente, pausa naquela conversa e mostra um aviso de "aguardando atendimento" no painel. A atendente responde pelo app WhatsApp Business no celular. | ✅ |
+| RN-81 | **Fora do horário de atendimento** (padrão: o horário do restaurante, 11h às 14h, de segunda a sexta), o bot **não atende**: responde com um aviso do horário de funcionamento e **não anota pedidos**. | ✅ |
 | RN-29 | Quando a administradora responde manualmente uma conversa pelo celular, o bot **pausa** naquela conversa por um tempo configurável, para não responder por cima dela. | 🟡 |
 
 ### 3.4 Pedidos de marmita
@@ -153,13 +164,14 @@ Cliente manda qualquer mensagem
 |--------|-------|--------|
 | RN-30 | Pedidos ficam num **kanban** com 3 colunas: **Para fazer → Em preparação → Finalizado**. | ✅ |
 | RN-31 | A administradora move os pedidos entre as colunas (arrastar ou botão). | ✅ |
-| RN-32 | Pedidos podem ser **impressos** (individual e/ou lista do dia, ver Q-08). | ✅ |
+| RN-32 | Pedidos são **impressos em folha A4**, com vários pedidos por folha e uma **marcação clara separando um pedido do outro** (linha de corte). Cada pedido mostra: número, nome e telefone do cliente, dia, tamanho, quantidade, carnes escolhidas, **observação em destaque**, forma de pagamento e retirada ou entrega. | ✅ |
+| RN-32a | Se for **entrega**, o pedido impresso traz **todas as informações da entrega**: bairro, endereço completo, ponto de referência (se informado), telefone e taxa (quando houver). | ✅ |
 | RN-33 | Cada pedido guarda o **canal de origem** (`WHATSAPP`, `SITE`, `BALCAO`), já pensando no pedido pelo site. | ✅ |
 | RN-34 | Pedido também pode ser **cancelado** (fora do kanban, registra o motivo). | 🟡 |
 | RN-35 | **Horário limite** geral para pedidos do mesmo dia: **desligado por padrão**. Pode ser ativado no painel; quando ativo, o valor sugerido é **13:00**. Depois do limite, o bot oferece outro dia útil. Para **entrega** vale o limite próprio de 11h30 (RN-75). Ver [Onde alterar configurações](#6-onde-alterar-configurações). | ✅ |
 | RN-36 | O pedido guarda um "retrato" do item e do preço no momento do pedido (mudar o cardápio depois não altera pedidos antigos). | ✅ (boa prática) |
 | RN-37 | O kanban mostra por padrão os pedidos **do dia**, com filtro por data. | 🟡 |
-| RN-38 | Opcional: avisar o cliente pelo WhatsApp quando o pedido for "Finalizado". | ❓ (Q-09) |
+| RN-38 | ~~Avisar o cliente quando o pedido for "Finalizado".~~ Descartada: não há essa necessidade. | ❌ |
 | RN-39 | Existem dois **tamanhos de marmita: Pequena e Grande**. Os tamanhos mudam **só a quantidade de comida**; as regras de escolha são as mesmas. O **preço é por tamanho** e pode ser **editado a qualquer momento** no painel, pois muda com frequência. Pedidos já feitos mantêm o preço da hora do pedido (RN-36). | ✅ |
 
 #### Composição da marmita
@@ -179,6 +191,13 @@ Cliente manda qualquer mensagem
 | RN-75 | **Entrega** só para a **região próxima a Pinhais** e só para pedidos feitos **até 11h30** do dia da entrega. Depois disso, o bot oferece **retirada** ou entrega em outro dia. | ✅ |
 | RN-76 | A região atendida é uma **lista de bairros** cadastrada no painel. Como os clientes raramente mandam CEP, o bot **não tenta identificar o bairro pelo endereço**: mostra a lista de bairros para o cliente escolher e depois pede o endereço por escrito. Se o bairro não estiver na lista, oferece retirada. | 🟡 (detalhar na implementação, Q-16) |
 | RN-77 | **Taxa de entrega:** por enquanto **não há taxa** (R$ 0,00), mas o sistema já permite cadastrar uma taxa por bairro no futuro. O pedido guarda a taxa cobrada no momento. | ✅ |
+
+#### Pagamento
+
+| Código | Regra | Status |
+|--------|-------|--------|
+| RN-78 | Formas de pagamento: **na retirada**, **na entrega** ou **Pix (transferência)**. O cliente escolhe no pedido, e a forma escolhida aparece no kanban e no pedido impresso. | ✅ |
+| RN-79 | Os **dados do Pix** (chave e nome do recebedor) são dados sensíveis: ficam no arquivo **`.env`** do servidor, nunca no código nem no banco. O bot mostra esses dados ao cliente que escolher Pix. | ✅ |
 
 ### 3.5 Solicitações, elogios e reclamações
 
@@ -202,6 +221,7 @@ Cliente manda qualquer mensagem
 |--------|-------|--------|
 | RN-60 | Só usuários `ADMIN` acessam o painel `/admin`. | ✅ |
 | RN-61 | A modelagem já prevê os papéis `CUSTOMER` e `STAFF` para as próximas fases. | ✅ |
+| RN-62 | Além da administradora, só a **gerente** (que fica no caixa) usa o sistema. Ela tem login próprio com o papel `STAFF` ("Gerente"). As permissões dela ainda vão ser definidas (Q-21). | 🟡 |
 
 ---
 
@@ -240,13 +260,10 @@ Nenhuma solução impede totalmente a cópia (alguém pode tirar print). As medi
 
 | Código | Pergunta | Impacta |
 |--------|----------|---------|
-| Q-06 | Precisa de opção "falar com atendente" no menu do bot? | Chatbot |
-| Q-08 | Impressão de pedidos: **um por folha/etiqueta**, **lista do dia** ou os dois? Tem impressora térmica? | RN-32 |
-| Q-09 | Avisar o cliente quando a marmita ficar pronta? | RN-38 |
-| Q-10 | **Pagamento**: só na retirada/entrega, ou Pix antecipado? | Pedido, futuro |
-| Q-11 | Qual o horário de funcionamento (ex.: 11h–14h)? O bot responde fora desse horário? | Chatbot, site |
-| Q-13 | Haverá funcionários usando o sistema (ex.: cozinha vendo o kanban)? | Papel STAFF |
 | Q-16 | **Detalhes da entrega, a rever na implementação (Etapa 4):** quais bairros entram na lista? A identificação por escolha de bairro funciona bem na prática? Quando houver taxa, ela será por bairro ou única? | RN-76, RN-77 |
+| Q-19 | **Pix:** o cliente manda o comprovante pelo WhatsApp? Alguém confere antes de preparar a marmita, ou o pedido segue direto? | RN-78 |
+| Q-20 | **Horário do bot × prazos:** com o bot atendendo só das 11h às 14h, os pedidos com entrega ficam limitados a **11h00–11h30**, e quem recebe o cardápio no envio semanal fora desse horário só consegue responder depois das 11h. O bot deve começar a atender **mais cedo** (ex.: 8h) só para anotar pedidos e mostrar o cardápio? | RN-75, RN-81, RN-27 |
+| Q-21 | **Permissões da gerente:** ela pode ver e mover pedidos, imprimir e ver feedbacks? Pode editar o cardápio, os preços e as configurações, ou só a administradora? | RN-62 |
 
 ### Questões respondidas
 
@@ -264,6 +281,12 @@ Nenhuma solução impede totalmente a cópia (alguém pode tirar print). As medi
 | Q-16 (parcial) | Região = **lista de bairros**. Clientes não costumam mandar CEP, então a identificação é difícil. Por enquanto **sem taxa**, mas o sistema deve prever taxa. Detalhes ficam para a implementação. | RN-76, RN-77 |
 | Q-17 | Sim: o limite de 2 carnes vale para os dois tamanhos, que mudam só a quantidade. | RN-39, RN-70 |
 | Q-18 | Não: só pode pedir para dias da semana atual. | RN-74 |
+| Q-06 | Sim, ter a opção "falar com atendente" é de bom tom. | RN-20, RN-80 |
+| Q-08 | Folha **A4**, com marcação separando os pedidos. Pedidos com entrega trazem endereço e todas as informações da entrega. | RN-32, RN-32a |
+| Q-09 | Não há necessidade de avisar o cliente quando a marmita fica pronta. | RN-38 (descartada) |
+| Q-10 | Pagamento na **retirada**, na **entrega** ou por **Pix**. Dados do Pix ficam no `.env`. | RN-78, RN-79 |
+| Q-11 | Restaurante das **11h às 14h**; entrega até **12h**. O bot **não atende fora do horário**: avisa e não anota pedidos. | RN-05, RN-06, RN-81, Q-20 |
+| Q-13 | Só a **gerente**, que fica no caixa, além da administradora. | RN-62, Q-21 |
 
 ---
 
@@ -274,11 +297,16 @@ Regras que podem mudar com frequência **não ficam fixas no código**: ficam em
 | Configuração | No painel (planejado) | Chave no banco | Valor padrão (código) |
 |--------------|----------------------|----------------|----------------------|
 | Horário limite de pedidos (RN-35) | Configurações → Pedidos → "Horário limite" (liga/desliga + hora) | `orders.cutoff.enabled` / `orders.cutoff.time` | `false` / `"13:00"` em `src/server/settings/defaults.ts` |
-| Dia/hora do envio semanal (RN-27) | Configurações → Chatbot → "Envio do cardápio" | `broadcast.weekly.weekday` / `broadcast.weekly.time` | segunda / `"08:00"` |
+| Horário de funcionamento (RN-05) | Configurações → Funcionamento | `business.hours.open` / `business.hours.close` | `"11:00"` / `"14:00"` |
+| Horário de atendimento do bot (RN-81) | Configurações → Chatbot → "Horário de atendimento" | `bot.hours.open` / `bot.hours.close` | igual ao funcionamento: `"11:00"` / `"14:00"` (ver Q-20) |
+| Mensagem de fora do horário (RN-81) | Configurações → Chatbot → Textos | `bot.text.outsideHours` | "Olá! Nosso atendimento é de segunda a sexta, das 11h às 14h..." |
+| Horário final das entregas (RN-06) | Configurações → Entrega | `delivery.until` | `"12:00"` |
+| Dia/hora do envio semanal (RN-27) | Configurações → Chatbot → "Envio do cardápio" | `broadcast.weekly.weekday` / `broadcast.weekly.time` | segunda / `"11:00"` (dentro do horário do bot) |
 | Máximo de carnes por marmita (RN-70) | Configurações → Pedidos | `orders.maxMeatChoices` | `2` |
 | Entrega ligada/desligada (RN-75) | Configurações → Entrega | `delivery.enabled` | `true` |
 | Horário limite para entrega (RN-75) | Configurações → Entrega | `delivery.cutoff.time` | `"11:30"` |
 | Bairros atendidos e taxa por bairro (RN-76, RN-77) | Configurações → Entrega → Bairros | tabela `DeliveryArea` (`name`, `feeCents`, `active`) | lista a cadastrar; taxa `0` |
+| **Dados do Pix** (RN-79) | ⚠️ **Não fica no painel.** Arquivo `.env` do servidor (na Vercel: Settings → Environment Variables) | `PIX_KEY`, `PIX_RECEIVER_NAME` | sem padrão; documentados em `.env.example` sem valores reais |
 | Pausa do bot após resposta manual (RN-29) | Configurações → Chatbot | `bot.pauseAfterHumanMinutes` | `60` |
 | Tamanhos e preços (RN-39) | Cardápio → Tamanhos e preços | tabela `MarmitaSize` | Pequena, Grande (seed, preço a cadastrar) |
 | Seções, itens fixos, cabeçalho e rodapé (RN-11) | Cardápio → Modelo | tabelas `MenuTemplate*` | modelo do exemplo (seed) |
@@ -295,3 +323,4 @@ Regras que podem mudar com frequência **não ficam fixas no código**: ficam em
 | 2026-11-23 | Respondidas Q-01, Q-02, Q-03, Q-04, Q-12 e parte da Q-05. Exemplo de cardápio adicionado. Nova estratégia de WhatsApp Business com coexistência. Novas regras RN-18, RN-28, RN-29, RN-39. Novas questões Q-14 e Q-15. Seção "Onde alterar configurações". |
 | 2026-11-24 | Respondidas Q-01 (envio só semanal), Q-02 (período por semana, cadastro para a próxima semana, fixos editáveis), Q-05, Q-14, Q-15 e parte da Q-07. Novas regras RN-19, RN-70 a RN-76. RN-28 descartada. Novas questões Q-16, Q-17 e Q-18. |
 | 2026-11-24 | Respondidas Q-17, Q-18 e parte da Q-16. RN-74 restrita à semana atual. RN-75 definida. Novas regras RN-76 (bairro escolhido numa lista) e RN-77 (sem taxa por enquanto, mas prevista). |
+| 2026-11-24 | Respondidas Q-06, Q-08, Q-09, Q-10, Q-11 e Q-13. Novas regras RN-05, RN-06, RN-32a, RN-62, RN-78 a RN-81. RN-32 detalhada. RN-38 descartada. Envio semanal padrão passa para 11h. Novas questões Q-19, Q-20 e Q-21. |
