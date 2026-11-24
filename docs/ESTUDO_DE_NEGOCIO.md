@@ -119,13 +119,14 @@ Cliente manda qualquer mensagem
 
 1 → cardápio do dia (e opção de ver a semana) → volta ao menu
 2 → fluxo de pedido:
-      escolher o dia: qualquer dia útil da semana com cardápio publicado (RN-74)
+      escolher o dia: dia útil da semana atual com cardápio publicado (RN-74)
       → tamanho: Pequena ou Grande (com preço atual)
       → escolher até 2 carnes do cardápio daquele dia (RN-70)
       → complementos vão todos por padrão (RN-71)
       → quantidade
       → observação livre (ex.: "sem feijão", "trocar farofa por batata") (RN-73)
       → retirada ou entrega (entrega só na região atendida e até 11h30, RN-75)
+        se entrega: escolher o BAIRRO numa lista + digitar o endereço (RN-76)
       → resumo com valor → cliente CONFIRMA
       → pedido criado com status "Para fazer" e aparece no kanban
 3 → escolher tipo: Solicitação | Elogio | Reclamação
@@ -159,13 +160,13 @@ Cliente manda qualquer mensagem
 | RN-36 | O pedido guarda um "retrato" do item e do preço no momento do pedido (mudar o cardápio depois não altera pedidos antigos). | ✅ (boa prática) |
 | RN-37 | O kanban mostra por padrão os pedidos **do dia**, com filtro por data. | 🟡 |
 | RN-38 | Opcional: avisar o cliente pelo WhatsApp quando o pedido for "Finalizado". | ❓ (Q-09) |
-| RN-39 | Existem dois **tamanhos de marmita: Pequena e Grande**. O **preço é por tamanho** e pode ser **editado a qualquer momento** no painel, pois muda com frequência. Pedidos já feitos mantêm o preço da hora do pedido (RN-36). | ✅ |
+| RN-39 | Existem dois **tamanhos de marmita: Pequena e Grande**. Os tamanhos mudam **só a quantidade de comida**; as regras de escolha são as mesmas. O **preço é por tamanho** e pode ser **editado a qualquer momento** no painel, pois muda com frequência. Pedidos já feitos mantêm o preço da hora do pedido (RN-36). | ✅ |
 
 #### Composição da marmita
 
 | Código | Regra | Status |
 |--------|-------|--------|
-| RN-70 | O cliente monta a marmita com o que quiser do cardápio **do dia escolhido**, podendo escolher **até 2 opções de carne**. O limite fica em configuração. | ✅ |
+| RN-70 | O cliente monta a marmita com o que quiser do cardápio **do dia escolhido**, podendo escolher **até 2 opções de carne**, nos **dois tamanhos**. O limite fica em configuração. | ✅ |
 | RN-71 | Os **complementos vão todos por padrão** (ex.: arroz, feijão e os acompanhamentos do dia). O cliente não precisa escolher. | ✅ |
 | RN-72 | A **salada vai separada** da marmita, em embalagem própria. | ✅ |
 | RN-73 | O pedido tem um **campo de observação livre** (ex.: "sem feijão", "sem salada", "trocar farofa por batata"), que aparece **em destaque na impressão do pedido** e no cartão do kanban. | ✅ |
@@ -174,9 +175,10 @@ Cliente manda qualquer mensagem
 
 | Código | Regra | Status |
 |--------|-------|--------|
-| RN-74 | O cliente pode pedir marmita para **qualquer dia útil da semana** (segunda a sexta), desde que o dia tenha cardápio publicado, não seja feriado/dia fechado e não tenha passado. | ✅ |
-| RN-75 | **Entrega** só para a **região próxima a Pinhais** e só para pedidos feitos **até 11h30** do dia da entrega. Depois disso, o bot oferece **retirada** ou entrega em outro dia. A definição exata da região ainda será revista (Q-16). | 🟡 |
-| RN-76 | Pedido com entrega exige endereço. O sistema confere se o endereço está na região atendida antes de confirmar. | 🟡 |
+| RN-74 | O cliente pode pedir marmita para **qualquer dia útil da semana atual** (segunda a sexta), desde que o dia tenha cardápio publicado, não seja feriado/dia fechado e não tenha passado. **Não é possível pedir para a semana seguinte**, mesmo que o cardápio já esteja publicado. | ✅ |
+| RN-75 | **Entrega** só para a **região próxima a Pinhais** e só para pedidos feitos **até 11h30** do dia da entrega. Depois disso, o bot oferece **retirada** ou entrega em outro dia. | ✅ |
+| RN-76 | A região atendida é uma **lista de bairros** cadastrada no painel. Como os clientes raramente mandam CEP, o bot **não tenta identificar o bairro pelo endereço**: mostra a lista de bairros para o cliente escolher e depois pede o endereço por escrito. Se o bairro não estiver na lista, oferece retirada. | 🟡 (detalhar na implementação, Q-16) |
+| RN-77 | **Taxa de entrega:** por enquanto **não há taxa** (R$ 0,00), mas o sistema já permite cadastrar uma taxa por bairro no futuro. O pedido guarda a taxa cobrada no momento. | ✅ |
 
 ### 3.5 Solicitações, elogios e reclamações
 
@@ -244,9 +246,7 @@ Nenhuma solução impede totalmente a cópia (alguém pode tirar print). As medi
 | Q-10 | **Pagamento**: só na retirada/entrega, ou Pix antecipado? | Pedido, futuro |
 | Q-11 | Qual o horário de funcionamento (ex.: 11h–14h)? O bot responde fora desse horário? | Chatbot, site |
 | Q-13 | Haverá funcionários usando o sistema (ex.: cozinha vendo o kanban)? | Papel STAFF |
-| Q-16 | **Região de entrega**: como definir "perto de Pinhais"? Lista de bairros, CEPs ou distância em km? Tem **taxa de entrega**? É igual para todos os bairros? | RN-75, RN-76 |
-| Q-17 | O limite de **2 carnes** vale para os dois tamanhos? A Pequena e a Grande mudam só a quantidade de comida? | RN-70 |
-| Q-18 | Na sexta, o cliente pode pedir para a **semana seguinte**, se o cardápio já estiver publicado? | RN-74 |
+| Q-16 | **Detalhes da entrega, a rever na implementação (Etapa 4):** quais bairros entram na lista? A identificação por escolha de bairro funciona bem na prática? Quando houver taxa, ela será por bairro ou única? | RN-76, RN-77 |
 
 ### Questões respondidas
 
@@ -261,6 +261,9 @@ Nenhuma solução impede totalmente a cópia (alguém pode tirar print). As medi
 | Q-12 | Não haverá número exclusivo; usar o **WhatsApp Business** atual. | §4.1, RN-29 |
 | Q-14 | O cliente escolhe o que quiser do cardápio, com **até 2 carnes**. Complementos vão normalmente. Salada vai separada. Observação livre, impressa no pedido. | RN-70 a RN-73 |
 | Q-15 | Pode pedir para **qualquer dia útil** da semana (segunda a sexta). | RN-74 |
+| Q-16 (parcial) | Região = **lista de bairros**. Clientes não costumam mandar CEP, então a identificação é difícil. Por enquanto **sem taxa**, mas o sistema deve prever taxa. Detalhes ficam para a implementação. | RN-76, RN-77 |
+| Q-17 | Sim: o limite de 2 carnes vale para os dois tamanhos, que mudam só a quantidade. | RN-39, RN-70 |
+| Q-18 | Não: só pode pedir para dias da semana atual. | RN-74 |
 
 ---
 
@@ -275,7 +278,7 @@ Regras que podem mudar com frequência **não ficam fixas no código**: ficam em
 | Máximo de carnes por marmita (RN-70) | Configurações → Pedidos | `orders.maxMeatChoices` | `2` |
 | Entrega ligada/desligada (RN-75) | Configurações → Entrega | `delivery.enabled` | `true` |
 | Horário limite para entrega (RN-75) | Configurações → Entrega | `delivery.cutoff.time` | `"11:30"` |
-| Região de entrega (RN-75, Q-16) | Configurações → Entrega → Regiões | tabela `DeliveryArea` | a definir |
+| Bairros atendidos e taxa por bairro (RN-76, RN-77) | Configurações → Entrega → Bairros | tabela `DeliveryArea` (`name`, `feeCents`, `active`) | lista a cadastrar; taxa `0` |
 | Pausa do bot após resposta manual (RN-29) | Configurações → Chatbot | `bot.pauseAfterHumanMinutes` | `60` |
 | Tamanhos e preços (RN-39) | Cardápio → Tamanhos e preços | tabela `MarmitaSize` | Pequena, Grande (seed, preço a cadastrar) |
 | Seções, itens fixos, cabeçalho e rodapé (RN-11) | Cardápio → Modelo | tabelas `MenuTemplate*` | modelo do exemplo (seed) |
@@ -291,3 +294,4 @@ Regras que podem mudar com frequência **não ficam fixas no código**: ficam em
 | 2026-11-19 | Versão inicial do estudo de negócio a partir do briefing. |
 | 2026-11-23 | Respondidas Q-01, Q-02, Q-03, Q-04, Q-12 e parte da Q-05. Exemplo de cardápio adicionado. Nova estratégia de WhatsApp Business com coexistência. Novas regras RN-18, RN-28, RN-29, RN-39. Novas questões Q-14 e Q-15. Seção "Onde alterar configurações". |
 | 2026-11-24 | Respondidas Q-01 (envio só semanal), Q-02 (período por semana, cadastro para a próxima semana, fixos editáveis), Q-05, Q-14, Q-15 e parte da Q-07. Novas regras RN-19, RN-70 a RN-76. RN-28 descartada. Novas questões Q-16, Q-17 e Q-18. |
+| 2026-11-24 | Respondidas Q-17, Q-18 e parte da Q-16. RN-74 restrita à semana atual. RN-75 definida. Novas regras RN-76 (bairro escolhido numa lista) e RN-77 (sem taxa por enquanto, mas prevista). |

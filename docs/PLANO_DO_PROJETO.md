@@ -32,7 +32,7 @@ Futuro   Pedido pelo site / clientes com login
 - **Entrega:** projeto rodando localmente com página "em construção".
 
 ## Etapa 1 — Banco de dados e autenticação
-- [ ] Validar a [modelagem](./MODELAGEM_DADOS.md) (pendente: Q-16 região de entrega)
+- [ ] Validar a [modelagem](./MODELAGEM_DADOS.md)
 - [ ] `schema.prisma` + primeira migração
 - [ ] Seed: usuária admin, modelo do cardápio atual (Carnes/Complementos/Saladas + itens fixos), tamanhos Pequena/Grande, feriados nacionais do ano
 - [ ] Módulo de configurações (`Setting` + valores padrão em `src/server/settings/defaults.ts`)
@@ -63,9 +63,9 @@ Futuro   Pedido pelo site / clientes com login
 - [ ] **Kanban**: Para fazer → Em preparação → Finalizado (arrastar e soltar)
 - [ ] Filtro por dia, contadores por coluna, atualização automática
 - [ ] Lançamento manual de pedido (canal `BALCAO`), útil antes do bot ficar pronto
-- [ ] Pedido com dia (qualquer dia útil, RN-74), tamanho, até 2 carnes (RN-70) e observação (RN-73)
+- [ ] Pedido com dia (dia útil da semana atual, RN-74), tamanho, até 2 carnes (RN-70) e observação (RN-73)
 - [ ] Horário limite configurável, desligado por padrão, sugestão 13:00 (RN-35)
-- [ ] Entrega: regiões atendidas e limite de 11h30 (RN-75, RN-76; região depende da Q-16)
+- [ ] Entrega: cadastro de bairros atendidos, limite de 11h30, taxa prevista (zerada) (RN-75 a RN-77). ⚠️ Rever a Q-16 com a administradora antes de implementar
 - [ ] **Impressão de pedidos** com a observação em destaque (RN-73; formato conforme Q-08)
 - **Entrega:** produção do dia organizada no kanban.
 

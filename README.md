@@ -127,10 +127,12 @@ res-bem-servir/
 - ✅ RN-33: pedido registra o canal de origem (WhatsApp, site, balcão).
 - ✅ RN-35: **horário limite desligado por padrão**; se ativado, sugestão de 13:00 (ver [onde alterar](docs/ESTUDO_DE_NEGOCIO.md#6-onde-alterar-configurações)).
 - ✅ RN-39: marmitas **Pequena** e **Grande**; **preços editáveis** a qualquer momento no painel.
-- ✅ RN-70/71/72: o cliente escolhe **até 2 carnes**; complementos vão por padrão; salada vai separada.
+- ✅ RN-70/71/72: o cliente escolhe **até 2 carnes** (nos dois tamanhos); complementos vão por padrão; salada vai separada.
 - ✅ RN-73: **observação** livre no pedido, impressa em destaque.
-- ✅ RN-74: pode pedir para **qualquer dia útil** da semana.
-- 🟡 RN-75: **entrega** só na região perto de Pinhais, para pedidos até **11h30** (região a definir).
+- ✅ RN-74: pode pedir para **qualquer dia útil da semana atual** (não para a semana seguinte).
+- ✅ RN-75: **entrega** só na região perto de Pinhais, para pedidos até **11h30**.
+- 🟡 RN-76: região = **lista de bairros**; o cliente escolhe o bairro no chat (detalhes na implementação).
+- ✅ RN-77: **sem taxa de entrega** por enquanto, mas o sistema já prevê taxa por bairro.
 
 **Feedbacks**
 - ✅ RN-40: Solicitações, Elogios e Reclamações em seções separadas.
@@ -147,7 +149,7 @@ Regras que mudam com frequência ficam no painel, não no código. Tabela comple
 | Horário limite de pedidos | Painel → Configurações → Pedidos · chave `orders.cutoff.*` · padrão em `src/server/settings/defaults.ts` |
 | Dia/hora do envio do cardápio | Painel → Configurações → Chatbot · chave `broadcast.weekly.*` |
 | Máximo de carnes por marmita | Painel → Configurações → Pedidos · chave `orders.maxMeatChoices` (padrão 2) |
-| Entrega: horário limite e regiões | Painel → Configurações → Entrega · chave `delivery.cutoff.time` (padrão 11:30) + tabela `DeliveryArea` |
+| Entrega: horário limite, bairros e taxa | Painel → Configurações → Entrega · chave `delivery.cutoff.time` (padrão 11:30) + tabela `DeliveryArea` (taxa padrão 0) |
 | Tamanhos e preços das marmitas | Painel → Cardápio → Tamanhos e preços |
 | Seções, itens fixos, título e rodapé do cardápio | Painel → Cardápio → Modelo |
 
@@ -155,10 +157,10 @@ Regras que mudam com frequência ficam no painel, não no código. Tabela comple
 
 Lista completa em [docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto](docs/ESTUDO_DE_NEGOCIO.md#5-questões-em-aberto). As que mais pesam:
 
-- **Q-16**: como delimitar a região de entrega (bairros, CEPs ou km)? Tem taxa?
-- **Q-17**: o limite de 2 carnes vale para os dois tamanhos?
-- **Q-18**: na sexta, pode pedir para a semana seguinte, se o cardápio já estiver publicado?
 - **Q-08**: formato da impressão dos pedidos (folha, etiqueta, impressora térmica?).
+- **Q-10**: pagamento só na retirada/entrega ou Pix antecipado?
+- **Q-11**: horário de funcionamento; o bot responde fora dele?
+- **Q-16**: detalhes da entrega (bairros, taxa), a rever na implementação.
 
 ## Documentação
 

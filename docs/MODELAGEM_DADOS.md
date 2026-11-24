@@ -139,7 +139,7 @@ erDiagram
     }
     DeliveryArea {
         uuid id
-        string name "bairro / região"
+        string name "bairro"
         int feeCents
         bool active
     }
@@ -234,7 +234,7 @@ erDiagram
 - `MenuWeek.title` e `footerNote` são copiados do modelo ao criar a semana, para que mudar o modelo não altere semanas já impressas.
 - `OrderItemChoice` guarda as **carnes escolhidas** (até `orders.maxMeatChoices`, padrão 2, RN-70), com retrato do nome. Complementos não são gravados um a um: vão todos por padrão (RN-71), e exceções ficam na observação do pedido (RN-73).
 - `MenuSection` ganhará um campo para marcar qual seção é "de escolha" (Carnes) e qual vai por padrão (Complementos) ou separada (Saladas), para que isso continue funcionando se as seções forem renomeadas.
-- `DeliveryArea` é provisória até a Q-16 definir como a região é delimitada (bairros, CEPs ou distância). `Order.deliveryFeeCents` guarda a taxa cobrada no momento do pedido.
+- `DeliveryArea` é a **lista de bairros atendidos** (RN-76). `feeCents` começa em `0` (sem taxa, RN-77) e permite taxa por bairro no futuro. `Order.deliveryFeeCents` guarda a taxa cobrada no momento do pedido.
 - `Conversation.state` guarda o passo atual da máquina de estados (ex.: `MAIN_MENU`, `ORDER_CHOOSE_SIZE`). `botPausedUntil` implementa RN-29.
 - `ChatMessage.waMessageId` único garante **idempotência**: o WhatsApp pode reenviar o mesmo webhook.
 - `Setting` guarda configurações e textos do bot por chave (`orders.cutoff.time`, `bot.greeting`...). Lista em [Onde alterar configurações](./ESTUDO_DE_NEGOCIO.md#6-onde-alterar-configurações).
